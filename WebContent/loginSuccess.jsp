@@ -4,12 +4,13 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BuyMe - Login Success</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="content center">
-        <h1>Your are now logged in.</h1> <br>
+        <h1>You are now logged in.</h1> <br>
         <a href="index.jsp">Click here to return to the login page.</a>
     </div>
 	
