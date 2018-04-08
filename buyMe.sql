@@ -12,3 +12,10 @@ CREATE TABLE account (
     access_level INT NOT NULL
 );
 
+CREATE TABLE product (
+    productId INT AUTO_INCREMENT KEY,
+    name VARCHAR(50) NOT NULL,
+    brand VARCHAR(25),
+    seller VARCHAR(25) NOT NULL,
+    price DECIMAL(20,2) NOT NULL
+)
