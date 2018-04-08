@@ -25,6 +25,7 @@
 			if (rs.next()) {
 				String db_password = rs.getString("password");
 				if (password.equals(db_password)) {
+					session.setAttribute("user", username);
 					response.sendRedirect("loginSuccess.jsp");
 		        	return;
 				} else {

@@ -10,8 +10,14 @@
 </head>
 <body>
     <div class="content center">
-        <h1>You are now logged in.</h1> <br>
-        <a href="index.jsp">Click here to return to the login page.</a>
+    <% if(session.getAttribute("user") == null) { %>
+   		<h1>You are not logged in.</h1>
+   		<a href="login.jsp">Click here to login.</a>
+    <% } else { %>
+    	<h1>Hello, <%=session.getAttribute("user")%></h1>
+        <h2>You are now logged in.</h2> <br>
+        <a href="logout.jsp"><button class="logout">Log Out</button></a>
+    <% } %>
     </div>
 	
 </body>

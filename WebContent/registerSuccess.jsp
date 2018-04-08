@@ -11,7 +11,7 @@
 <body>
     <div class="content center">
         <h1>Your account has been successfully created!</h1> <br>
-        <a href="index.jsp">Click here to return to the login page.</a>
+        <a href="login.jsp">Click here to return to the login page.</a>
     </div>
 	
 </body>
