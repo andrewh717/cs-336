@@ -35,7 +35,7 @@ input[type=text], input[type=password], input[type=email] {
   box-sizing: border-box;
 }
 
-button.logout, input[type=submit] {
+button, input[type=submit] {
   width: auto;
   background-color: #387ad1;
   color: white;
@@ -46,6 +46,6 @@ button.logout, input[type=submit] {
   cursor: pointer;
 }
 
-button.logout:hover, input[type=submit]:hover {
+button:hover, input[type=submit]:hover {
   background-color: #285794;
 }

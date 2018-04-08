@@ -5,12 +5,12 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>BuyMe</title>
+	<title>BuyMe - Login</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 	<div class="content center">
-        <h1>Hello World</h1> <br>
+        <h1>BuyMe</h1> <br>
         <form action="loginHandler.jsp" method="POST">
         	<input type="text" name="username" placeholder="Username"> <br>
         	<input type="password" name="password" placeholder="Password"> <br>
