@@ -28,7 +28,7 @@
 				&& password != null && !password.isEmpty()) {
 			
 			// Build the SQL query with placeholders for parameters
-			String insert = "INSERT INTO account (username, password, email, first_name, last_name, address, access_level)"
+			String insert = "INSERT INTO Account (username, password, email, first_name, last_name, address, access_level)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
 			ps = conn.prepareStatement(insert);
 			
