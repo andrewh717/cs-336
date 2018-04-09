@@ -6,21 +6,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BuyMe</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.0"/>
 </head>
 <body>
-    <div class="content center">
+    <div class="content">
     <% if(session.getAttribute("user") == null) { %>
    		<h1>BuyMe</h1>
    		<a href="login.jsp">Click here to login.</a>
     <% } else { %>
-    	<h1>Hello, <%=session.getAttribute("user")%></h1>
-        <form>
-        	<input type="text" name="searchbox" placeholder="Search for items"/>
-        	<input type="submit" value="Search"/>
-        </form>
-        <a href="#"><button>Create Auction</button></a> <br>
-        <a href="logout.jsp"><button>Log Out</button></a>
+    	<%@ include file="navbar.jsp" %>
+    	<h1>Hello, <%=session.getAttribute("user")%></h1>        
     <% } %>
     </div>
 	
