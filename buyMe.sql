@@ -2,23 +2,25 @@ DROP DATABASE IF EXISTS buyMe;
 CREATE DATABASE IF NOT EXISTS buyMe;
 USE buyMe;
 
-CREATE TABLE Account (
-	username VARCHAR(50) PRIMARY KEY,
+CREATE TABLE Account(
+	username VARCHAR(50),
     password VARCHAR(128) BINARY NOT NULL,
     email VARCHAR(128) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     address VARCHAR(128) NOT NULL,
-    access_level INT NOT NULL
+    access_level INT NOT NULL,
+    PRIMARY KEY (username)
 );
 
-CREATE TABLE Product (
-    productId INT AUTO_INCREMENT KEY,
+CREATE TABLE Product(
+    productId INT AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     brand VARCHAR(25),
-    seller VARCHAR(50) NOT NULL,
+    seller VARCHAR(50),
     price DECIMAL(20,2) NOT NULL,
-    sold BOOLEAN
+    sold BOOLEAN,
+    PRIMARY KEY(productId, seller)
 );
 
 CREATE TABLE Bid(
@@ -29,7 +31,7 @@ CREATE TABLE Bid(
 		ON DELETE CASCADE,
 	FOREIGN KEY (productId) REFERENCES Product(productId)
 		ON DELETE CASCADE,
-	PRIMARY KEY (productId, currentBid)
+	PRIMARY KEY (currentBid, buyer, productId)
 );
 
 CREATE TABLE BuyingHistory(
@@ -43,13 +45,14 @@ CREATE TABLE BuyingHistory(
 );
 
 CREATE TABLE SellingHistory(
-	seller VARCHAR(50),
 	productId INT,
+	seller VARCHAR(50),
 	price DECIMAL(20,2),
 	date DATETIME,
-	FOREIGN KEY (seller) REFERENCES Product(seller)
+	FOREIGN KEY (productId, seller) REFERENCES Product(productId, seller)
 		ON DELETE CASCADE,
-	FOREIGN KEY (price, productId) REFERENCES Bid(currentBid, productId),
+	FOREIGN KEY (price) REFERENCES Bid(currentBid),
+    #FOREIGN KEY (productId) REFERENCES Bid(productId),
 	PRIMARY KEY (seller, productId)
 );
 
