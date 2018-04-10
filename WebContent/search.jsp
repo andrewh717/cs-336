@@ -1,12 +1,27 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BuyMe - Search Results</title>
+	<link rel="stylesheet" href="style.css?v=1.0"/>
 </head>
 <body>
-	<test>
+	<div class="content">
+    <% if(session.getAttribute("user") == null) { %>
+   		<h1>BuyMe</h1>
+   		<a href="login.jsp">Click here to login.</a>
+    <% } else {
+    	String searchParams = request.getParameter("searchParams"); 
+    	if(searchParams == null || searchParams.isEmpty()) {
+    		response.sendRedirect("index.jsp");
+    	} %>
+    	<%@ include file="navbar.jsp" %>
+    	<h3>Search results for "<%=searchParams%>"</h3>        
+    <% } %>
+    </div>
 </body>
 </html>
