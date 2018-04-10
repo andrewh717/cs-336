@@ -19,6 +19,10 @@
 		String password = request.getParameter("password");
 		int accessLevel = 1;
 		
+		// Check if username already exists in the Account table
+		// if it exists, redirect to registerError.jsp, adding some code to let them know the username is taken already
+		// if it does not exist, proceed
+		
 		// Make sure all the fields are entered
 		if(firstName != null  && !firstName.isEmpty()
 				&& lastName != null && !lastName.isEmpty() 

@@ -8,18 +8,18 @@
     <link rel="stylesheet" href="style.css?v=1.0"/>
 </head>
 <body>
-    <div class="content">
-    <% if(session.getAttribute("user") == null) { %>
-   		response.sendRedirect("index.jsp");
-    <% } else { %>
+    <% if(session.getAttribute("user") == null) {
+    		response.sendRedirect("login.jsp");
+       } else { %>
     	<%@ include file="navbar.jsp" %>
-    	<h1>Hello, <%=session.getAttribute("user")%></h1>
-    	<ul>
-            <li><a href="#">View your bidding history</a></li>
-            <li><a href="#">View your selling history</a></li>
-            <li><a href="#">Change account settings</a></li>
-    	</ul>   
+    	<div class="content">
+	    	<h1>Hello, <%=session.getAttribute("user")%></h1>
+	    	<ul>
+	            <li><a href="#">View your bidding history</a></li>
+	            <li><a href="#">View your selling history</a></li>
+	            <li><a href="#">Change account settings</a></li>
+	    	</ul>   
+    	</div>
     <% } %>
-    </div>
 </body>
 </html>
