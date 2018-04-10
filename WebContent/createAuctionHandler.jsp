@@ -17,6 +17,8 @@
 		float size = Float.parseFloat(request.getParameter("size"));
 		String model = request.getParameter("model");
 		String color = request.getParameter("color");
+		String endDateTime = request.getParameter("end_datetime");
+		float reserve = Float.parseFloat(request.getParameter("min_price"));
 		
 		// Make sure all the fields are entered
 		if(category != null  && !category.isEmpty()
@@ -24,11 +26,13 @@
 				&& gender != null && !gender.isEmpty()
 				&& size != 0.0f
 				&& model != null && !model.isEmpty()
-				&& color != null && !color.isEmpty()) {
+				&& color != null && !color.isEmpty()
+				&& endDateTime != null && !endDateTime.isEmpty()
+				&& reserve != 0.0f) {
 			
 			// Build the SQL query with placeholders for parameters
-		/*	String insert = "INSERT INTO Product (username, password, email, first_name, last_name, address, access_level)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+		/*	String insert = "INSERT INTO Product (fields of Product table)"
+					+ "VALUES(? fields of Product table)";
 			ps = conn.prepareStatement(insert);
 		*/
 			// Add parameters to query

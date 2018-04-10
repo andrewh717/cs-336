@@ -1,8 +1,12 @@
+body {
+	margin: 0;
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 .content {
   margin: 0 auto;
   max-width: 1280px;
   width: 90%;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 @media only screen and (min-width: 601px) {
@@ -25,7 +29,7 @@ h1 {
   margin-bottom: 0;
 }
 
-input[type=text], input[type=password], input[type=email] {
+input[type=text], input[type=password], input[type=email], input[type=datetime-local], input[type=number] {
   width: auto;
   padding: 8px 20px;
   margin: 8px 0;
@@ -50,7 +54,11 @@ button:hover, input[type=submit]:hover {
   background-color: #285794;
 }
 
-div.nav ul {
+.nav {
+	margin: 0;
+}
+
+.nav ul {
 	width: 100%;
 	list-style-type: none;
     margin: 0;
@@ -59,11 +67,11 @@ div.nav ul {
     background-color: #333;
 }
 
-div.nav li {
+.nav li {
     float: left;
 }
 
-div.nav li a {
+.nav li a {
 	display: block;
     color: white;
     text-align: center;
@@ -71,15 +79,15 @@ div.nav li a {
     text-decoration: none;
 }
 
-div.nav li a:hover {
+.nav li a:hover {
 	background-color: #111;	
 }
 
-div.nav #searchButton {
+.nav #searchButton {
 	
 }
 
-div.nav #logoutButton {
+.nav #logoutButton {
 	padding: 5px 10px;
 	margin: 0px;
 }
