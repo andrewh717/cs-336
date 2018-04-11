@@ -15,7 +15,7 @@
         } else { %>
     	<%@ include file="navbar.jsp" %>
     	<div class="content">
-			<form action="createActionHandler.jsp" method="POST">
+			<form action="createAuctionHandler.jsp" method="POST">
 				<label for="category">Category</label>
 				<select name="category" id="category" required>
 					<option value="" disabled selected hidden="true">Select category</option>
@@ -68,6 +68,8 @@
 				<input type="text" name="model" id="model" placeholder="Enter model name" required> <br>
 				<label for="color">Color</label>
 				<input type="text" name="color" id="color" placeholder="Enter color(s)" required> <br>
+				<label for="start_datetime">Start Date and Time</label>
+				<input type="datetime-local" name="start_datetime" id="start_datetime" required> <br>
 				<label for="end_datetime">End Date and Time</label>
 				<input type="datetime-local" name="end_datetime" id="end_datetime" required> <br>
 				<label for="min_price">Minimum Bid Price</label>
