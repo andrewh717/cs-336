@@ -52,10 +52,10 @@ CREATE TABLE BuyingHistory(
 	buyer VARCHAR(50),
 	date DATETIME,
 	FOREIGN KEY (productId) REFERENCES Product(productId)
-		ON DELETE CASCADE,
+		ON DELETE SET NULL,
 	FOREIGN KEY (buyer) REFERENCES Account(username)
 		ON DELETE CASCADE,
-	PRIMARY KEY (buyer, productId)
+	PRIMARY KEY (buyer)
 );
 
 DROP TABLE IF EXISTS SellingHistory;
@@ -64,9 +64,11 @@ CREATE TABLE SellingHistory(
 	seller VARCHAR(50),
 	price DECIMAL(20,2) NOT NULL,
 	date DATETIME,
-	FOREIGN KEY (productId, seller) REFERENCES Product(productId, seller)
+	FOREIGN KEY (productId) REFERENCES Product(productId)
+		ON DELETE SET NULL,
+	FOREIGN KEY (seller) REFERENCES Account(username)
 		ON DELETE CASCADE,
-	PRIMARY KEY (seller, productId)
+	PRIMARY KEY (seller)
 );
 
 DROP TABLE IF EXISTS Email;
@@ -80,93 +82,121 @@ CREATE TABLE Email(
     PRIMARY KEY (messageId, to_username, from_username)
 );
 
-
+# Does not allow negative prices and checks for duplicate productId's
 DROP TRIGGER IF EXISTS PriceCheck;
 DELIMITER $$
-	CREATE TRIGGER PriceCheck AFTER INSERT ON Product
+	CREATE TRIGGER PriceCheck BEFORE INSERT ON Product
 	FOR EACH ROW
 	BEGIN
-	IF NEW.price<0
-	THEN
-		BEGIN
-			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Price cannot be negative';
-		END;
-	END IF; 
-END $$
+		IF NEW.price<0
+		THEN
+			BEGIN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Price cannot be negative';
+			END;
+		ELSEIF (EXISTS(
+			SELECT P.productId
+			FROM Product P
+			WHERE P.productId=NEW.productId
+		))THEN
+			BEGIN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='ProductId already exists';
+			END;
+		END IF; 
+	END $$
 DELIMITER ;
 
+# After the item gets sold, places it in the buying/selling history tables and deletes it from bid table
 DROP TRIGGER IF EXISTS SoldItems;
 DELIMITER $$
 	CREATE TRIGGER SoldItems AFTER UPDATE ON Product
     FOR EACH ROW 
     BEGIN
-    IF NEW.sold=true
-    THEN
-		BEGIN
-			INSERT INTO BuyingHistory (price, buyer, productId, date)
-            SELECT B.currentBid, B.buyer, B.productId, NOW()
-            FROM Bid B
-            WHERE B.productId=NEW.productId;
-            
-            INSERT INTO SellingHistory (productId, seller, price, date)
-            SELECT P.productId, P.seller, P.price, NOW()
-            FROM Product P
-            WHERE P.productId=NEW.productId;
-            
-            DELETE FROM Bid WHERE productId=NEW.productId;
-		END;
-	END IF; 
-END $$
+		IF NEW.sold=true
+		THEN
+			BEGIN
+				INSERT INTO BuyingHistory (price, buyer, productId, date)
+				SELECT B.currentBid, B.buyer, B.productId, NOW()
+				FROM Bid B
+				WHERE B.productId=NEW.productId;
+				
+				INSERT INTO SellingHistory (productId, seller, price, date)
+				SELECT P.productId, P.seller, P.price, NOW()
+				FROM Product P
+				WHERE P.productId=NEW.productId;
+				
+				DELETE FROM Bid WHERE productId=NEW.productId;
+			END;
+		END IF; 
+	END $$
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS Checking;
-DELIMITER $$
-	CREATE TRIGGER Checking BEFORE INSERT ON Product
-    FOR EACH ROW
-    BEGIN
-    IF (EXISTS(
-		SELECT P.productId
-		FROM Product P
-        WHERE P.productId=NEW.productId
-	))THEN
-		BEGIN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='ProductId already exists';
-		END;
-	END IF; 
-END $$
-DELIMITER ;
-
+# Updates the price after a new bid, and prevents placing bid lower than existing bid
 DROP TRIGGER IF EXISTS UpdatingPrice;
 DELIMITER $$
 	CREATE TRIGGER UpdatingPrice AFTER UPDATE ON Bid
     FOR EACH ROW
     BEGIN
-    IF (NEW.currentBid>OLD.currentBid)
-    THEN 
-		BEGIN
-			UPDATE Product
-			SET price=NEW.currentBid
-			WHERE NEW.productId=productId;
-		END;
-	END IF;
-END $$
+		IF (NEW.currentBid>OLD.currentBid)
+		THEN 
+			BEGIN
+				UPDATE Product
+				SET price=NEW.currentBid
+				WHERE NEW.productId=productId;
+			END;
+		ELSEIF (NEW.currentBid<OLD.currentBid)
+		THEN
+			BEGIN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The new bid is lower than the current bid';
+			END;
+		END IF;
+	END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS NewBid;
+DELIMITER $$
+	CREATE TRIGGER NewBid BEFORE INSERT ON Bid
+    FOR EACH ROW
+    BEGIN
+		IF (NEW.currentBid<(SELECT P.price
+							FROM Product P
+                            WHERE P.productId=NEW.productId))
+        THEN 
+			BEGIN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The new bid is lower than the current bid';
+			END;
+		ELSEIF(NEW.currentBid>(SELECT P.price
+								FROM Product P
+								WHERE P.productId=NEW.productId))
+		THEN
+			BEGIN
+				UPDATE Product
+				SET price=NEW.currentBid
+				WHERE NEW.productId=productId;
+            END;
+		END IF;
+	END $$
 DELIMITER ;
 
 # For testing purposes
 /*
-INSERT INTO Product VALUES(1,'testboot','shoe','ra','M',4,'ras','black','roslan',5,false,'2018-03-05 01:01:01','2018-03-05 01:05:01');
-INSERT INTO Bid VALUES(5,'test',1);
+# Testing tuples
+INSERT INTO Product VALUES(1,'testboot','shoe','ra','M',4,'black','roslan',25,false,'2018-03-05 01:01:01','2018-03-05 01:05:01');
+INSERT INTO Bid VALUES(30,'test',1);
 
+# To clean up
 DELETE FROM Product WHERE productId=1;
 DELETE FROM SellingHistory WHERE productId=1 AND seller='roslan';
 DELETE FROM BuyingHistory WHERE productId=1 AND buyer='test';
+DELETE FROM Account WHERE username='roslan';
+DELETE FROM Bid WHERE productId=1;
 
+# Testing the triggers
 UPDATE Product
 SET sold=true
 WHERE productId=1;
 
 UPDATE Bid
-SET currentBid=6
+SET currentBid=50
 WHERE productId=1;
 
 SELECT *
