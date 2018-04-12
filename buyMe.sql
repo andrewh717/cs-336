@@ -17,12 +17,11 @@ CREATE TABLE Account(
 DROP TABLE IF EXISTS Product;
 CREATE TABLE Product(
 	productId INT AUTO_INCREMENT,
-	name VARCHAR(50) NOT NULL,
 	category VARCHAR(50) NOT NULL,
 	brand VARCHAR(25),
+	model VARCHAR(50) NOT NULL,
 	gender VARCHAR(10) NOT NULL,
     size INT,
-    model VARCHAR(50),
     color VARCHAR(20),
 	seller VARCHAR(50) NOT NULL,
 	price DECIMAL(20,2) NOT NULL,
@@ -80,6 +79,7 @@ CREATE TABLE Email(
     FOREIGN KEY (from_username) REFERENCES Account(username),
     PRIMARY KEY (messageId, to_username, from_username)
 );
+
 
 DROP TRIGGER IF EXISTS PriceCheck;
 DELIMITER $$
