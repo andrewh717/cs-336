@@ -16,18 +16,16 @@
 	<%@ include file="navbar.jsp"%>
 	<div class="content">
 		<form action="createAuctionHandler.jsp" method="POST">
-			<label for="category">Category</label> <select name="category"
-				id="category" required>
-				<option value="" disabled selected hidden="true">Select
-					category</option>
+			<label for="category">Category</label> <select name="category" id="category" required>
+				<option value="" disabled selected hidden="true">Select category</option>
 				<option value="formal">Dress Shoes</option>
 				<option value="sneakers">Sneakers</option>
 				<option value="sandals">Sandals</option>
 				<option value="boots">Boots</option>
-			</select> <br> <label for="brand">Brand</label> <select name="brand"
-				id="brand" required>
-				<option value="" disabled selected hidden="true">Select
-					brand</option>
+			</select> <br>
+			<label for="brand">Brand</label>
+			<select name="brand" id="brand" required>
+				<option value="" disabled selected hidden="true">Select brand</option>
 				<option value="adidas">Adidas</option>
 				<option value="asics">Asics</option>
 				<option value="ecco">Ecco</option>
@@ -74,8 +72,7 @@
 			<label for="end_datetime">End Date and Time</label>
 			<input type="datetime-local" name="end_datetime" id="end_datetime" required> <br>
 			<label for="min_price">Minimum Bid Price</label>
-			<input type="number" name="min_price" placeholder="0.00" min="0.00" required> <br>
-			
+			<input type="number" name="min_price" placeholder="0.00" min="0.00" required> <br>	
 			<input type="submit" value="Submit">
 		</form>
 	</div>
