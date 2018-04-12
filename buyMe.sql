@@ -152,6 +152,7 @@ DELIMITER $$
 	END $$
 DELIMITER ;
 
+# Prevents from starting a bid for lower than the min_bid and updates the price in Product if the new bid is higher
 DROP TRIGGER IF EXISTS NewBid;
 DELIMITER $$
 	CREATE TRIGGER NewBid BEFORE INSERT ON Bid
