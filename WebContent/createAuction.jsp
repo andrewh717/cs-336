@@ -18,10 +18,10 @@
 		<form action="createAuctionHandler.jsp" method="POST">
 			<label for="category">Category</label> <select name="category" id="category" required>
 				<option value="" disabled selected hidden="true">Select category</option>
-				<option value="formal">Dress Shoes</option>
-				<option value="sneakers">Sneakers</option>
-				<option value="sandals">Sandals</option>
-				<option value="boots">Boots</option>
+				<option value="Dress Shoes">Dress Shoes</option>
+				<option value="Sneakers">Sneakers</option>
+				<option value="Sandals">Sandals</option>
+				<option value="Boots">Boots</option>
 			</select> <br>
 			<label for="brand">Brand</label>
 			<select name="brand" id="brand" required>
