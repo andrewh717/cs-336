@@ -16,7 +16,11 @@
        	<%@ include file="navbar.jsp" %>
 	    <div class="content">
 	    	<h2>Error: Failed to create auction.</h2>
-	    	<p>Be sure to fill out the fields correctly, including a Minimum Bid Price > 0.</p>	    	
+	    	<p>
+	    		Be sure to fill out the fields correctly, adhering to the following guidelines: <br>
+	    		Minimum Bid Price must be greater than 0 <br>
+	    		Start Date must be earlier than the End Date <br>
+	    	</p>	    	
 	    	<a href="createAuction.jsp">Click here to try again.</a>        
 	    </div>
 	    
