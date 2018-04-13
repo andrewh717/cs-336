@@ -5,6 +5,7 @@
 	String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
 	Connection conn = null;
 	PreparedStatement ps = null;
+	ResultSet rs = null;
 	
 	try {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -12,25 +13,15 @@
 		
 		// Get the parameters from the createAuction request
 		String category = request.getParameter("category");
-		System.out.println(category);
 		String brand = request.getParameter("brand");
-		System.out.println(brand);
 		String gender = request.getParameter("gender");
-		System.out.println(gender);
-		float size = Float.parseFloat(request.getParameter("size"));
-		System.out.println(request.getParameter("size"));		
+		float size = Float.parseFloat(request.getParameter("size"));		
 		String model = request.getParameter("model");
-		System.out.println(model);
 		String color = request.getParameter("color");
-		System.out.println(color);
 		String seller = (session.getAttribute("user")).toString();
-		System.out.println(seller);		
 		float minPrice = Float.parseFloat(request.getParameter("min_price"));
-		System.out.println(minPrice);
 		String startDate = request.getParameter("start_datetime");
-		System.out.println(startDate);
 		String endDate = request.getParameter("end_datetime");
-		System.out.println(endDate);
 		
 		// Make sure all the fields are entered
 		if(category != null  && !category.isEmpty()
@@ -46,7 +37,7 @@
 		// Build the SQL query with placeholders for parameters
 			String insert = "INSERT INTO Product (category, brand, model, gender, size, color, seller, price, sold, startDate, endDate)"
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			ps = conn.prepareStatement(insert);
+			ps = conn.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
 		
 			// Add parameters to query
 			//ps.setString(1, name);
@@ -68,7 +59,10 @@
 	        if (result < 1) {
 	        	out.println("Error: Auction creation failed.");
 	        } else {
-	        	response.sendRedirect("createAuctionSuccess.jsp"); //success
+	        	rs = ps.getGeneratedKeys();
+	        	rs.next();
+	        	int productId = rs.getInt(1);
+	        	response.sendRedirect("auction.jsp?productId=" + productId); //success
 	        	return;
 	        }
 		} else {
