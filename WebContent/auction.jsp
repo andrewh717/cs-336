@@ -64,6 +64,7 @@
 				Size: <%= rs.getString("gender") %> <%= rs.getFloat("size") %> <br>
 				Color: <%= rs.getString("color") %> <br>
 				Seller: <%= rs.getString("seller") %> <br>
+				End Date/Time: <%= rs.getString("endDate") %> <br>
 				
 				<% 
 					Locale locale = new Locale("en", "US");
@@ -87,7 +88,7 @@
 				
 				<!-- Provide option to place bid if current user is not the seller -->
 				<% if (!session.getAttribute("user").equals(rs.getString("seller"))) { %>
-						<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>" method="POST">
+						<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>" method="POST">
 						<% if (isStartingBid) {%>
 							<input type="number" step="0.01" name="bid" placeholder="Bid <%= currency.format(price) %> or higher" min="<%= price %>">
 						<% } else { %>
