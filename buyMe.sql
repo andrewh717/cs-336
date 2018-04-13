@@ -28,8 +28,6 @@ CREATE TABLE Product(
 	sold BOOLEAN,
     startDate DATETIME,
     endDate DATETIME,
-    FOREIGN KEY (seller) REFERENCES Account(username)
-		ON DELETE CASCADE,
 	PRIMARY KEY(productId, seller)
 );
 
@@ -42,7 +40,7 @@ CREATE TABLE Bid(
 		ON DELETE CASCADE,
 	FOREIGN KEY (productId) REFERENCES Product(productId)
 		ON DELETE CASCADE,
-	PRIMARY KEY (currentBid, buyer, productId)
+	PRIMARY KEY (currentBid, productId)
 );
 
 DROP TABLE IF EXISTS BuyingHistory;
@@ -51,11 +49,9 @@ CREATE TABLE BuyingHistory(
 	price DECIMAL(20,2) NOT NULL,
 	buyer VARCHAR(50),
 	date DATETIME,
-	FOREIGN KEY (productId) REFERENCES Product(productId)
-		ON DELETE SET NULL,
 	FOREIGN KEY (buyer) REFERENCES Account(username)
 		ON DELETE CASCADE,
-	PRIMARY KEY (buyer, date)
+	PRIMARY KEY (productId)
 );
 
 DROP TABLE IF EXISTS SellingHistory;
@@ -64,11 +60,9 @@ CREATE TABLE SellingHistory(
 	seller VARCHAR(50),
 	price DECIMAL(20,2) NOT NULL,
 	date DATETIME,
-	FOREIGN KEY (productId) REFERENCES Product(productId)
-		ON DELETE SET NULL,
 	FOREIGN KEY (seller) REFERENCES Account(username)
 		ON DELETE CASCADE,
-	PRIMARY KEY (seller, date)
+	PRIMARY KEY (productId)
 );
 
 DROP TABLE IF EXISTS Email;
@@ -77,9 +71,15 @@ CREATE TABLE Email(
 	to_username VARCHAR(50),
     from_username VARCHAR(50),
     message VARCHAR(200) NOT NULL,
-    FOREIGN KEY (to_username) REFERENCES Account(username),
-    FOREIGN KEY (from_username) REFERENCES Account(username),
-    PRIMARY KEY (messageId, to_username, from_username)
+    PRIMARY KEY (messageId)
+);
+
+DROP TABLE IF EXISTS BidHistory;
+CREATE TABLE BidHistory(
+	bid DECIMAL(20,2),
+    buyer VARCHAR(50),
+    productId INT,
+    PRIMARY KEY(bid, productId)
 );
 
 # Does not allow negative prices and checks for duplicate productId's
@@ -101,8 +101,13 @@ DELIMITER $$
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='ProductId already exists';
 			END;
+		ELSEIF (NEW.startDate>NEW.endDate)
+		THEN
+			BEGIN
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The end date cannot be before the start date';
+            END;
 		END IF; 
-	END $$
+	END; $$
 DELIMITER ;
 
 # After the item gets sold, places it in the buying/selling history tables and deletes it from bid table
@@ -127,7 +132,7 @@ DELIMITER $$
 				DELETE FROM Bid WHERE productId=NEW.productId;
 			END;
 		END IF; 
-	END $$
+	END; $$
 DELIMITER ;
 
 # Updates the price after a new bid, and prevents placing bid lower than existing bid
@@ -143,13 +148,13 @@ DELIMITER $$
 				SET price=NEW.currentBid
 				WHERE NEW.productId=productId;
 			END;
-		ELSEIF (NEW.currentBid<OLD.currentBid)
+		ELSEIF (NEW.currentBid<=OLD.currentBid)
 		THEN
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The new bid is lower than the current bid';
 			END;
 		END IF;
-	END $$
+	END; $$
 DELIMITER ;
 
 # Prevents from starting a bid for lower than the min_bid and updates the price in Product if the new bid is higher
@@ -175,17 +180,42 @@ DELIMITER $$
 				WHERE NEW.productId=productId;
             END;
 		END IF;
-	END $$
+	END; $$
+DELIMITER ;
+
+# Places the bid in the BidHistory table before updating the bid to new higher one
+DROP TRIGGER IF EXISTS ArchiveBids;
+DELIMITER $$
+	CREATE TRIGGER ArchiveBids BEFORE DELETE ON Bid
+    FOR EACH ROW
+    BEGIN
+		INSERT INTO BidHistory (bid, buyer, productId)
+        SELECT B.currentBid, B.buyer, B.productId
+        FROM Bid B
+        WHERE OLD.productId=B.productId;
+	END; $$
+DELIMITER ;
+
+# An event that goes on once a day and removes the bids that are pastdue
+DROP EVENT IF EXISTS PastDue;
+DELIMITER $$
+	CREATE EVENT PastDue 
+	ON SCHEDULE EVERY 1 DAY
+	COMMENT 'Delets pastdue bids'
+	DO
+		BEGIN
+			DELETE FROM Product WHERE NOW()>endDate;
+		END; $$
 DELIMITER ;
 
 # For testing purposes
 /*
 # Testing tuples
-INSERT INTO Product VALUES(1,'testboot','shoe','ra','M',4,'black','roslan',25,false,'2018-03-05 01:01:01','2018-03-05 01:05:01');
+INSERT INTO Product VALUES(3,'testboot','shoe','ra','M',4,'black','roslan',25,false,'2018-03-05 01:00:00','2018-03-04 05:00:00');
 INSERT INTO Bid VALUES(30,'test',1);
 
 # To clean up
-DELETE FROM Product WHERE productId=1;
+DELETE FROM Product WHERE productId=14;
 DELETE FROM SellingHistory WHERE productId=1 AND seller='roslan';
 DELETE FROM BuyingHistory WHERE productId=1 AND buyer='test';
 DELETE FROM Account WHERE username='roslan';
