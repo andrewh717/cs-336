@@ -70,7 +70,7 @@
 			return;
 		}
 	} catch(Exception e) {
-        out.print("<p>Error connecting to MYSQL server.</p>");
+        response.sendRedirect("createAuctionError.jsp"); // MySql error such as Start Date before End Date
         e.printStackTrace();
     } finally {
         try { ps.close(); } catch (Exception e) {}
