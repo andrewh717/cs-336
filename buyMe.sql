@@ -102,7 +102,7 @@ DELIMITER $$
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='ProductId already exists';
 			END;
-		ELSEIF (NEW.startDate>NEW.endDate)
+		ELSEIF (NEW.startDate<NEW.endDate)
 		THEN
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The end date cannot be before the start date';
