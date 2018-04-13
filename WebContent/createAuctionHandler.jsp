@@ -33,8 +33,8 @@
 				&& color != null && !color.isEmpty()
 				&& startDate != null && !startDate.isEmpty()
 				&& endDate != null && !endDate.isEmpty()
-				&& minPrice != 0.0f
-				&& startingPrice != 0.0f) {
+				&& minPrice >= 0.0f
+				&& startingPrice >= 0.0f) {
 			
 		// Build the SQL query with placeholders for parameters
 			String insert = "INSERT INTO Product (category, brand, model, gender, size, color, seller, min_price, price, sold, startDate, endDate)"

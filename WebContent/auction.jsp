@@ -81,7 +81,7 @@
 						Starting Bid: <%= currency.format(price) %> <br>
 				<%	} else { 
 						isStartingBid = false; 
-				%>
+				%>	
 						Current bid: <%= currency.format(price) %> <br>
 				<% } %>
 				
@@ -89,9 +89,9 @@
 				<% if (!session.getAttribute("user").equals(rs.getString("seller"))) { %>
 						<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>" method="POST">
 						<% if (isStartingBid) {%>
-							<input type="number" step="0.01" name="bid" placeholder="Bid <%= currency.format(price) %> or higher" min="<%= currency.format(price) %>">
+							<input type="number" step="0.01" name="bid" placeholder="Bid <%= currency.format(price) %> or higher" min="<%= price %>">
 						<% } else { %>
-							<input type="number" step="0.01" name="bid" placeholder="Bid higher than <%= currency.format(price) %>" min="<%= currency.format(minPrice) %>">
+							<input type="number" step="0.01" name="bid" placeholder="Bid higher than <%= currency.format(price) %>" min="<%= minPrice %>">
 						<% } %>
 							<input type="submit" value="Place bid">
 						</form>
@@ -161,7 +161,7 @@
 			
 				
 			<%	
-				} catch(Exception e) {
+				} catch(SQLException e) {
 					out.print("<p>Error connecting to MYSQL server.</p>");
 			        e.printStackTrace();
 				} finally {
