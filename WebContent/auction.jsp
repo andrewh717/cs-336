@@ -18,7 +18,7 @@
 			<%
 				String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
 				Connection conn = null;
-				Statement s = null;
+				PreparedStatement ps = null;
 				ResultSet rs = null;
 				
 				try {
@@ -29,16 +29,52 @@
 			        e.printStackTrace();
 				}
 				int productId = Integer.parseInt(request.getParameter("productId"));
-				String productQuery = "SELECT * FROM Product p WHERE p.productId=" + productId;
-				rs = s.executeQuery(productQuery);
-				if (rs.next()) {
-					String itemName = rs.getString("name");
-					String category = rs.getString("category");
-				} else {
+				String productQuery = "SELECT * FROM Product WHERE productId=?";
+				ps = conn.prepareStatement(productQuery);
+				ps.setInt(1, productId);
+				
+				rs = ps.executeQuery();
+				if (!rs.next()) {
 					response.sendRedirect("error.jsp");
 					return;
 				}
 			%>
+			<h2>Auction Category: <%= rs.getString("category") %></h2> <br>
+			Brand: <%= rs.getString("brand") %> <br>
+			Model: <%= rs.getString("model") %> <br>
+			Size: <%= rs.getString("gender") %> <%= rs.getFloat("size") %> <br>
+			Color: <%= rs.getString("color") %> <br>
+			Seller: <%= rs.getString("seller") %> <br>
+			
+			<h2>Similar items on auction:</h2>
+			<table>
+				<tr>
+					<th>Item</th>
+					<th>Seller</th>
+					<th>Current Bid</th>
+					<th>End Date/Time</th>
+				</tr>
+				
+			<%
+				ResultSet similarItems = null;
+				String similarQuery = "SELECT * FROM Product WHERE productId!=" + productId
+						+ " AND (brand LIKE \'" + rs.getString("brand") + "\' OR model LIKE \'" + rs.getString("model") + "\')";
+				Statement s = conn.createStatement();
+				similarItems = s.executeQuery(similarQuery);
+				while (similarItems.next()) { %>
+					<tr>
+						<td>
+							<a href="auction.jsp?productId=<%= similarItems.getInt("productId") %>">
+								<%= similarItems.getString("brand") + " " + similarItems.getString("model") + " " + similarItems.getString("gender") +  " " + similarItems.getFloat("size") %>
+							</a>
+						</td>
+						<td><%= similarItems.getString("seller") %></td>
+						<td><%= similarItems.getFloat("price") %></td>
+						<td><%= similarItems.getString("endDate") %></td>
+					</tr>
+			 <%	} %>		
+		
+			</table>
     	</div> 	        
     <% } %>
 </body>

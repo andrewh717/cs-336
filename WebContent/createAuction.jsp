@@ -26,15 +26,15 @@
 			<label for="brand">Brand</label>
 			<select name="brand" id="brand" required>
 				<option value="" disabled selected hidden="true">Select brand</option>
-				<option value="adidas">Adidas</option>
-				<option value="asics">Asics</option>
-				<option value="ecco">Ecco</option>
-				<option value="newBalance">New Balance</option>
-				<option value="nike">Nike</option>
-				<option value="puma">Puma</option>
-				<option value="reebok">Reebok</option>
-				<option value="vans">Vans</option>
-				<option value="other">Other</option>
+				<option value="Adidas">Adidas</option>
+				<option value="Asics">Asics</option>
+				<option value="Ecco">Ecco</option>
+				<option value="New Balance">New Balance</option>
+				<option value="Nike">Nike</option>
+				<option value="Puma">Puma</option>
+				<option value="Reebok">Reebok</option>
+				<option value="Vans">Vans</option>
+				<option value="Other">Other</option>
 			</select> <br> 
 			<input type="radio" name="gender" value="Men's"> Men's <br> 
 			<input type="radio" name="gender" value="Women's"> Women's <br> 
