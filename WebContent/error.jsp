@@ -14,7 +14,7 @@
     	<%@ include file="navbar.jsp" %>
     	<div class="content">
     		<h2>Oops! Something went wrong.</h2>
-    		<p>Sorry, <%=session.getAttribute("user")%>, click here to return to the home page.</p>
+    		<p>Sorry, <%=session.getAttribute("user")%>, <a href="index.jsp">click here to return to the home page.</a></p>
     	</div>
     <% } %>
 </body>

@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import="java.io.*,java.util.*,java.sql.*,java.text.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*"%>
 <!DOCTYPE html>
 <html>
@@ -18,110 +18,162 @@
 			<%
 				String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
 				Connection conn = null;
-				PreparedStatement ps = null;
+				PreparedStatement ps1 = null;
+				PreparedStatement ps2 = null;
+				PreparedStatement ps3 = null;
+
 				ResultSet rs = null;
-				ResultSet bids = null;
+				ResultSet bids1 = null;
+				ResultSet bids2 = null;
+				
+				boolean isStartingBid = false;
 				
 				try {
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
 					conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
+				
+					int productId = Integer.parseInt(request.getParameter("productId"));
+					String productQuery = "SELECT * FROM Product WHERE productId=?";
+					ps1 = conn.prepareStatement(productQuery);
+					ps1.setInt(1, productId);
+					
+					rs = ps1.executeQuery();
+					if (!rs.next()) {
+						response.sendRedirect("error.jsp"); // Occurs if there is no row in Product table with the given productId
+						return;
+					} 
+			%>
+				
+				<!-- Let user know bid has been placed if redirected from bidHandler.jsp -->
+				<% 
+					Enumeration<String> params = request.getParameterNames();
+					params.nextElement();
+					if (params.hasMoreElements()) {
+						params.nextElement();
+						if ((request.getParameter("bid")).equals("success")) { 
+				%>
+						<h2>Your bid has been placed successfully.</h2> <br>
+					<% 
+						}
+					} 
+					%>
+				
+				<h2>Auction Category: <%= rs.getString("category") %></h2> <br>
+				Brand: <%= rs.getString("brand") %> <br>
+				Model: <%= rs.getString("model") %> <br>
+				Size: <%= rs.getString("gender") %> <%= rs.getFloat("size") %> <br>
+				Color: <%= rs.getString("color") %> <br>
+				Seller: <%= rs.getString("seller") %> <br>
+				
+				<% 
+					Locale locale = new Locale("en", "US");
+					NumberFormat currency = NumberFormat.getCurrencyInstance(locale);
+					double price = rs.getDouble("price");
+					double minPrice = price + 0.01;
+					String bidQuery = "SELECT * FROM Bid WHERE productId=?";
+					ps2 = conn.prepareStatement(bidQuery);
+					ps2.setInt(1, productId);
+					
+					bids1 = ps2.executeQuery();
+					if (!bids1.next()) { 
+						isStartingBid = true;
+				%>
+						Starting Bid: <%= currency.format(price) %> <br>
+				<%	} else { 
+						isStartingBid = false; 
+				%>
+						Current bid: <%= currency.format(price) %> <br>
+				<% } %>
+				
+				<!-- Provide option to place bid if current user is not the seller -->
+				<% if (!session.getAttribute("user").equals(rs.getString("seller"))) { %>
+						<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>" method="POST">
+						<% if (isStartingBid) {%>
+							<input type="number" step="0.01" name="bid" placeholder="Bid <%= currency.format(price) %> or higher" min="<%= currency.format(price) %>">
+						<% } else { %>
+							<input type="number" step="0.01" name="bid" placeholder="Bid higher than <%= currency.format(price) %>" min="<%= currency.format(minPrice) %>">
+						<% } %>
+							<input type="submit" value="Place bid">
+						</form>
+				<% } %>
+				
+				<!-- Display bids if there are any -->
+				<%
+					ps3 = conn.prepareStatement(bidQuery);
+					ps3.setInt(1, productId);
+					
+					bids2 = ps3.executeQuery();
+					if (bids2.next()) { 
+				%>
+						<h2>Bid History</h2>
+						<table>
+							<tr>
+								<th>Bidder</th>
+								<th>Bid Amount</th>
+							</tr>
+					<%	do { %>
+							<tr>
+								<td><%= bids2.getString("buyer") %></td>
+								<td><%= currency.format(bids2.getDouble("currentBid")) %></td>
+							</tr>
+					<%	} while (bids2.next()); %>
+						</table>		
+				<%	} else { %>
+						<h2>There are currently no bids for this auction.</h2> <br>
+				<%	} %>
+				
+				
+					
+				<%
+					ResultSet similarItems = null;
+					String genderFixed = (rs.getString("gender")).replace("'", "\\'");
+					String similarQuery = "SELECT * FROM Product WHERE productId!=" + productId
+							+ " AND (brand LIKE \'" + rs.getString("brand") + "\' OR model LIKE \'" + rs.getString("model") 
+							+ "\' OR (size LIKE " + rs.getFloat("size") + " AND gender LIKE \'" + genderFixed + "\'))";
+					Statement s = conn.createStatement();
+					similarItems = s.executeQuery(similarQuery);
+					if (similarItems.next()) { 
+				%>
+					<h2>Similar items on auction:</h2>
+					<table>
+						<tr>
+							<th>Item</th>
+							<th>Seller</th>
+							<th>Current Bid</th>
+							<th>End Date/Time</th>
+						</tr>
+					<%	do { %>
+						<tr>
+							<td>
+								<a href="auction.jsp?productId=<%= similarItems.getInt("productId") %>">
+									<%= similarItems.getString("brand") + " " + similarItems.getString("model") + " " + similarItems.getString("gender") +  " " + similarItems.getFloat("size") %>
+								</a>
+							</td>
+							<td><%= similarItems.getString("seller") %></td>
+							<td><%= currency.format(similarItems.getDouble("price")) %></td>
+							<td><%= similarItems.getString("endDate") %></td>
+						</tr>
+				 <%		} while (similarItems.next()); %> 
+					</table>
+				<%	} else { %>
+						<br><h3>There are no similar items on auction.</h3>
+				<%	} %>		
+			
+				
+			<%	
 				} catch(Exception e) {
 					out.print("<p>Error connecting to MYSQL server.</p>");
 			        e.printStackTrace();
-				}
-				int productId = Integer.parseInt(request.getParameter("productId"));
-				String productQuery = "SELECT * FROM Product WHERE productId=?";
-				ps = conn.prepareStatement(productQuery);
-				ps.setInt(1, productId);
-				
-				rs = ps.executeQuery();
-				if (!rs.next()) {
-					response.sendRedirect("error.jsp"); // Occurs if there is no row in Product table with the given productId
-					return;
+				} finally {
+					try { rs.close(); } catch (Exception e) {}
+					try { bids1.close(); } catch (Exception e) {}
+					try { bids2.close(); } catch (Exception e) {}
+					try { ps1.close(); } catch (Exception e) {}
+					try { ps2.close(); } catch (Exception e) {}
+					try { ps3.close(); } catch (Exception e) {}
+			        try { conn.close(); } catch (Exception e) {}
 				}
 			%>
-			
-			<!-- Let user know bid has been placed if redirected from bidHandler.jsp -->
-			<% 
-				Enumeration<String> params = request.getParameterNames();
-				params.nextElement();
-			if (params.hasMoreElements()) {
-				params.nextElement();
-				if ((request.getParameter("bid")).equals("success")) { %>
-					<h2>Your bid has been placed successfully.</h2> <br>
-			<% }
-			} %>
-			
-			<h2>Auction Category: <%= rs.getString("category") %></h2> <br>
-			Brand: <%= rs.getString("brand") %> <br>
-			Model: <%= rs.getString("model") %> <br>
-			Size: <%= rs.getString("gender") %> <%= rs.getFloat("size") %> <br>
-			Color: <%= rs.getString("color") %> <br>
-			Seller: <%= rs.getString("seller") %> <br>
-			Current bid: $<%= rs.getFloat("price") %> <br>
-			
-			<!-- Provide option to place bid if current user is not the seller -->
-			<% if (!session.getAttribute("user").equals(rs.getString("seller"))) { %>
-					<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>" method="POST">
-						<input type="number" name="bid" placeholder="Bid $<%= rs.getFloat("price") + 1 %> or higher" min="<%= rs.getFloat("price") + 1 %>">
-						<input type="submit" value="Place bid">
-					</form>
-			<% } %>
-			
-			<!-- Display bids if there are any -->
-			<%
-				String bidQuery = "SELECT * FROM Bid WHERE productId=?";
-				ps = conn.prepareStatement(bidQuery);
-				ps.setInt(1, productId);
-				
-				bids = ps.executeQuery();
-				if (bids.next()) { %>
-					<h2>Bid History</h2>
-					<table>
-						<tr>
-							<th>Bidder</th>
-							<th>Bid Amount</th>
-						</tr>
-				<%	do { %>
-						<tr>
-							<td><%= bids.getString("buyer") %></td>
-							<td>$<%= bids.getFloat("currentBid") %></td>
-						</tr>
-				<%	} while (bids.next()); %>
-					</table>		
-			<%	} else { %>
-					<h2>There are currently no bids for this auction.</h2> <br>
-			<%	} %>
-			
-			<h2>Similar items on auction:</h2>
-			<table>
-				<tr>
-					<th>Item</th>
-					<th>Seller</th>
-					<th>Current Bid</th>
-					<th>End Date/Time</th>
-				</tr>
-				
-			<%
-				ResultSet similarItems = null;
-				String similarQuery = "SELECT * FROM Product WHERE productId!=" + productId
-						+ " AND (brand LIKE \'" + rs.getString("brand") + "\' OR model LIKE \'" + rs.getString("model") + "\')";
-				Statement s = conn.createStatement();
-				similarItems = s.executeQuery(similarQuery);
-				while (similarItems.next()) { %>
-					<tr>
-						<td>
-							<a href="auction.jsp?productId=<%= similarItems.getInt("productId") %>">
-								<%= similarItems.getString("brand") + " " + similarItems.getString("model") + " " + similarItems.getString("gender") +  " " + similarItems.getFloat("size") %>
-							</a>
-						</td>
-						<td><%= similarItems.getString("seller") %></td>
-						<td><%= similarItems.getFloat("price") %></td>
-						<td><%= similarItems.getString("endDate") %></td>
-					</tr>
-			 <%	} %>		
-		
-			</table>
     	</div> 	        
     <% } %>
 </body>
