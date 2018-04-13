@@ -20,6 +20,7 @@
 		String color = request.getParameter("color");
 		String seller = (session.getAttribute("user")).toString();
 		float minPrice = Float.parseFloat(request.getParameter("min_price"));
+		float startingPrice = Float.parseFloat(request.getParameter("starting_price"));
 		String startDate = request.getParameter("start_datetime");
 		String endDate = request.getParameter("end_datetime");
 		
@@ -32,11 +33,12 @@
 				&& color != null && !color.isEmpty()
 				&& startDate != null && !startDate.isEmpty()
 				&& endDate != null && !endDate.isEmpty()
-				&& minPrice != 0.0f) {
+				&& minPrice != 0.0f
+				&& startingPrice != 0.0f) {
 			
 		// Build the SQL query with placeholders for parameters
-			String insert = "INSERT INTO Product (category, brand, model, gender, size, color, seller, price, sold, startDate, endDate)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			String insert = "INSERT INTO Product (category, brand, model, gender, size, color, seller, min_price, price, sold, startDate, endDate)"
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			ps = conn.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
 		
 			// Add parameters to query
@@ -49,9 +51,10 @@
 			ps.setString(6, color);
 			ps.setString(7, seller);
 			ps.setFloat(8, minPrice);
-			ps.setBoolean(9, false);
-			ps.setString(10, startDate);
-			ps.setString(11, endDate);
+			ps.setFloat(9, startingPrice);			
+			ps.setBoolean(10, false);
+			ps.setString(11, startDate);
+			ps.setString(12, endDate);
 			
 
 			int result = 0;
