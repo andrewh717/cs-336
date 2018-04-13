@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import="java.io.*,java.util.*,java.sql.*,java.text.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*"%>
 <!DOCTYPE html>
 <html>
@@ -30,12 +30,17 @@
 			        e.printStackTrace();
 				}
 	    		
+	    		Locale locale = new Locale("en", "US");
+				NumberFormat currency = NumberFormat.getCurrencyInstance(locale);
 	    		String auctionQuery = "SELECT * FROM Product WHERE seller=?";
 	    		ps = conn.prepareStatement(auctionQuery);
 	    		ps.setString(1, (session.getAttribute("user")).toString());
-	    		rs = ps.executeQuery();	
+	    		rs = ps.executeQuery();
+	    		
     			
-    			if (rs.next()) { %>
+    			if (rs.next()) { 
+    				double currBid = rs.getDouble("price");
+    		%>
 	    			<h2>Your created auctions:</h2>
 	    			<table>
 	    				<tr>
@@ -50,7 +55,7 @@
 									<%= rs.getString("brand") + " " + rs.getString("model") + " " + rs.getString("gender") +  " " + rs.getFloat("size") %>
 								</a>
 							</td>
-							<td><%= rs.getFloat("price") %></td>
+							<td><%= currency.format(currBid) %></td>
 							<td><%= rs.getString("endDate") %></td>
 						</tr> 			
     			<%	} while (rs.next()); %>
