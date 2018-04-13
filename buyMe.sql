@@ -24,6 +24,7 @@ CREATE TABLE Product(
     size INT,
     color VARCHAR(20),
 	seller VARCHAR(50) NOT NULL,
+    min_price DECIMAL (20,2) NOT NULL,
 	price DECIMAL(20,2) NOT NULL,
 	sold BOOLEAN,
     startDate DATETIME,
@@ -178,6 +179,8 @@ DELIMITER $$
 				UPDATE Product
 				SET price=NEW.currentBid
 				WHERE NEW.productId=productId;
+                
+                #DELETE FROM Bid WHERE productId=NEW.productId;
             END;
 		END IF;
 	END; $$
@@ -189,10 +192,7 @@ DELIMITER $$
 	CREATE TRIGGER ArchiveBids BEFORE DELETE ON Bid
     FOR EACH ROW
     BEGIN
-		INSERT INTO BidHistory (bid, buyer, productId)
-        SELECT B.currentBid, B.buyer, B.productId
-        FROM Bid B
-        WHERE OLD.productId=B.productId;
+		INSERT INTO BidHistory VALUES(OLD.currentBid, OLD.buyer, OLD.productId);
 	END; $$
 DELIMITER ;
 
@@ -219,7 +219,8 @@ DELIMITER $$
 	COMMENT 'Delets pastdue bids'
 	DO
 		BEGIN
-			DELETE FROM Product WHERE NOW()>endDate;
+            UPDATE Product SET sold=true WHERE NOW()>endDate AND price>min_price;
+			DELETE FROM Product WHERE NOW()>endDate AND price<min_price;
 		END; $$
 DELIMITER ;
 
@@ -230,7 +231,7 @@ INSERT INTO Product VALUES(3,'testboot','shoe','ra','M',4,'black','roslan',25,fa
 INSERT INTO Bid VALUES(30,'test',1);
 
 # To clean up
-DELETE FROM Product WHERE productId=14;
+DELETE FROM Product WHERE productId=21;
 DELETE FROM SellingHistory WHERE productId=1 AND seller='roslan';
 DELETE FROM BuyingHistory WHERE productId=1 AND buyer='test';
 DELETE FROM Account WHERE username='roslan';
@@ -250,6 +251,9 @@ FROM Product;
 
 SELECT *
 FROM Bid;
+
+SELECT *
+FROM BidHistory;
 
 SELECT *
 FROM BuyingHistory;

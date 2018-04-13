@@ -18,10 +18,10 @@
 		<form action="createAuctionHandler.jsp" method="POST">
 			<label for="category">Category</label> <select name="category" id="category" required>
 				<option value="" disabled selected hidden="true">Select category</option>
-				<option value="formal">Dress Shoes</option>
-				<option value="sneakers">Sneakers</option>
-				<option value="sandals">Sandals</option>
-				<option value="boots">Boots</option>
+				<option value="Dress Shoes">Dress Shoes</option>
+				<option value="Sneakers">Sneakers</option>
+				<option value="Sandals">Sandals</option>
+				<option value="Boots">Boots</option>
 			</select> <br>
 			<label for="brand">Brand</label>
 			<select name="brand" id="brand" required>
@@ -71,8 +71,10 @@
 			<input type="datetime-local" name="start_datetime" id="start_datetime" placeholder="mm/dd/yyyy --:-- --" required> <br> 
 			<label for="end_datetime">End Date and Time</label>
 			<input type="datetime-local" name="end_datetime" id="end_datetime" placeholder="mm/dd/yyyy --:-- --" required> <br>
-			<label for="min_price">Minimum Bid Price</label>
-			<input type="number" name="min_price" placeholder="0.00" min="0.00" required> <br>	
+			<label for="min_price">Minimum Bid Price (hidden from bidders)</label>
+			<input type="number" step="0.01" name="min_price" placeholder="0.00" min="0.00" required> <br>	
+			<label for="starting_price">Starting Bid Price</label>
+			<input type="number" step="0.01" name="starting_price" placeholder="0.00" min="0.00" required> <br>	
 			<input type="submit" value="Submit">
 		</form>
 	</div>
