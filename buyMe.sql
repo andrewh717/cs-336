@@ -235,7 +235,7 @@ DELETE FROM Product WHERE productId=21;
 DELETE FROM SellingHistory WHERE productId=1 AND seller='roslan';
 DELETE FROM BuyingHistory WHERE productId=1 AND buyer='test';
 DELETE FROM Account WHERE username='roslan';
-DELETE FROM Bid WHERE productId=1;
+DELETE FROM BidHistory WHERE productId=6;
 
 # Testing the triggers
 UPDATE Product
