@@ -25,7 +25,7 @@
 	    		try {
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
 					conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
-				} catch(Exception e) {
+				} catch(SQLException e) {
 					out.print("<p>Error connecting to MYSQL server.</p>");
 			        e.printStackTrace();
 				}
@@ -39,7 +39,6 @@
 	    		
     			
     			if (rs.next()) { 
-    				double currBid = rs.getDouble("price");
     		%>
 	    			<h2>Your created auctions:</h2>
 	    			<table>
@@ -55,7 +54,7 @@
 									<%= rs.getString("brand") + " " + rs.getString("model") + " " + rs.getString("gender") +  " " + rs.getFloat("size") %>
 								</a>
 							</td>
-							<td><%= currency.format(currBid) %></td>
+							<td><%= currency.format(rs.getDouble("price")) %></td>
 							<td><%= rs.getString("endDate") %></td>
 						</tr> 			
     			<%	} while (rs.next()); %>

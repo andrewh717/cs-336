@@ -17,7 +17,7 @@
 	    	<ul>
 	            <li><a href="#">View your bidding history</a></li>
 	            <li><a href="#">View your selling history</a></li>
-	            <li><a href="#">Change account settings</a></li>
+	            <li><a href="accountSettings.jsp">Change account settings</a></li>
 	    	</ul>   
     	</div>
     <% } %>

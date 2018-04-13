@@ -19,18 +19,21 @@
 			ArrayList<String> paramList = new ArrayList<String>();
 			Map<String, String> searchParams = new HashMap<String, String>();
 			int index = 0;
-			for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements(); index++) {
-				paramList.add(params.nextElement());
-				String paramValue = request.getParameter(paramList.get(index));
-				//System.out.println(paramList.get(index));
-				//System.out.println(paramValue);
+			for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
+				//paramList.add(params.nextElement());
+				String paramName = params.nextElement();
+				String paramValue = request.getParameter(paramName);
 				if (!paramValue.isEmpty() && paramValue != null) {
+					paramList.add(paramName);
+					//System.out.println(paramList.get(index));
+					//System.out.println(paramValue);
 					if ((paramList.get(index)).equals("gender")) {
 						String genderFixed = paramValue.replace("'", "\\'");
 						searchParams.put(paramList.get(index), genderFixed);
 					} else {				
 						searchParams.put(paramList.get(index), paramValue);
 					}
+					index++;
 				}
 			}
 			
@@ -53,6 +56,8 @@
 					// Check for numeric parameter so we can format the SQL query correctly
 					if ((paramList.get(i)).equals("size")) {
 						condition = paramList.get(i) + " LIKE " + searchParams.get(paramList.get(i));
+					} else if ((paramList.get(i)).equals("color")) {
+						condition = paramList.get(i) + " LIKE \'%" + searchParams.get(paramList.get(i)) + "%\'";
 					} else {
 						condition = paramList.get(i) + " LIKE \'" + searchParams.get(paramList.get(i)) + "\'";	
 					}
