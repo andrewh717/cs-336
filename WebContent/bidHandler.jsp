@@ -24,14 +24,12 @@
 		insertResult = ps1.executeUpdate();
 		if (insertResult < 1) {
 			response.sendRedirect("error.jsp"); // This should never happen
-		} else {
+		} else if (!Boolean.parseBoolean((request.getParameter("isStartingBid")))) {
 			String deleteOldBid = "DELETE FROM Bid WHERE productId=? AND buyer=? AND currentBid!=?";
 			ps2 = conn.prepareStatement(deleteOldBid);
 			ps2.setInt(1, productId);
 			ps2.setString(2, bidder);
-			System.out.println(ps2);
 			ps2.setFloat(3, newBid);
-			System.out.println("world");
 			int deleteResult = 0;
 			deleteResult = ps2.executeUpdate();
 			if (deleteResult < 1) {
@@ -40,7 +38,10 @@
 				// Bid placed successfully, redirect to auction page
 				response.sendRedirect("auction.jsp?productId=" + productId + "&bid=success"); 	
 			}			
-		}		
+		} else {
+			// Bid placed successfully, redirect to auction page
+			response.sendRedirect("auction.jsp?productId=" + productId + "&bid=success");
+		}
 	} catch(Exception e) {
 		out.print("<p>Error connecting to MYSQL server.</p>");
 	    e.printStackTrace();
