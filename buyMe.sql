@@ -55,7 +55,7 @@ CREATE TABLE BuyingHistory(
 		ON DELETE SET NULL,
 	FOREIGN KEY (buyer) REFERENCES Account(username)
 		ON DELETE CASCADE,
-	PRIMARY KEY (buyer)
+	PRIMARY KEY (buyer, date)
 );
 
 DROP TABLE IF EXISTS SellingHistory;
@@ -68,7 +68,7 @@ CREATE TABLE SellingHistory(
 		ON DELETE SET NULL,
 	FOREIGN KEY (seller) REFERENCES Account(username)
 		ON DELETE CASCADE,
-	PRIMARY KEY (seller)
+	PRIMARY KEY (seller, date)
 );
 
 DROP TABLE IF EXISTS Email;
