@@ -36,7 +36,7 @@
 				<option value="Vans">Vans</option>
 				<option value="Other">Other</option>
 			</select> <br> 
-			<input type="radio" name="gender" value="Men's"> Men's <br> 
+			<input type="radio" name="gender" value="Men's" required> Men's <br> 
 			<input type="radio" name="gender" value="Women's"> Women's <br> 
 			<input type="radio" name="gender" value="Boys'"> Boys' <br> 
 			<input type="radio" name="gender" value="Girls'"> Girls' <br>
