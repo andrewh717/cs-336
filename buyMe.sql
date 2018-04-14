@@ -37,9 +37,10 @@ SET foreign_key_checks = 1;
 
 DROP TABLE IF EXISTS Bid;
 CREATE TABLE Bid(
-	currentBid DECIMAL(20,2),
-	buyer VARCHAR(50),
 	productId INT,
+	buyer VARCHAR(50),
+	currentBid DECIMAL(20,2),
+    date DATETIME,
 	FOREIGN KEY (buyer) REFERENCES Account(username)
 		ON DELETE CASCADE,
 	FOREIGN KEY (productId) REFERENCES Product(productId)
@@ -80,9 +81,10 @@ CREATE TABLE Email(
 
 DROP TABLE IF EXISTS BidHistory;
 CREATE TABLE BidHistory(
-	bid DECIMAL(20,2),
-    buyer VARCHAR(50),
     productId INT,
+    buyer VARCHAR(50),
+	bid DECIMAL(20,2),
+    date DATETIME,
     PRIMARY KEY(bid, productId)
 );
 
