@@ -16,26 +16,36 @@
 		String lastName = request.getParameter("last_name");
 		String email = request.getParameter("email");
 		String address = request.getParameter("address");
-		String oldPassword = request.getParameter("old_password");
+		String currPassword = request.getParameter("curr_password");
 		String newPassword = request.getParameter("new_password");
 		String confirmNewPassword = request.getParameter("confirm_new_password");
-		
+	
+		// Get the user's row from Account table
 		String validation = "SELECT password FROM Account WHERE username=?";
 		pwPs = conn.prepareStatement(validation);
 		pwPs.setString(1, user);
 		rs = pwPs.executeQuery();
 		
+		// Make sure the user entered the correct current password
 		if (rs.next()) {
 			String db_password = rs.getString("password");
-			//System.out.println("DB password: " + db_password);
-			//System.out.println("Old password enterd: " + oldPassword);
-			if (!oldPassword.equals(db_password)) { %>
+			if (!currPassword.equals(db_password)) { %>
 				<jsp:include page="accountSettings.jsp" flush="true"/>
 				<div class="content center">
-					<h1>Error: Old password is incorrect.</h1>
+					<h1>
+						<br>Error: Current password is incorrect.<br>
+						You must enter your correct password to make changes to your account.
+					</h1>
 				</div>
 	    <%    	return;
-			}
+			} else if (currPassword.equals(newPassword)) { %>
+				<jsp:include page="accountSettings.jsp" flush="true"/>
+				<div class="content center">
+					<h1>
+						<br>Error: New password cannot be the same as current password.
+					</h1>
+				</div>
+		<%	}
 		} else {
 			// No account found with the current user's username
 			// Should never happen
@@ -43,6 +53,7 @@
 			return;
 		}
 		
+		// Make sure the new password is entered correctly in the confirm box
 		if (!newPassword.equals(confirmNewPassword)) { %>
 			<jsp:include page="accountSettings.jsp" flush="true"/>
 			<div class="content center">
@@ -60,7 +71,12 @@
 		ps.setString(2, lastName);
 		ps.setString(3, email);
 		ps.setString(4, address);
-		ps.setString(5, newPassword);
+		// Change password if the new password is different and is not empty/null
+		if (newPassword.isEmpty() || newPassword == null) {
+			ps.setString(5, currPassword);
+		} else {
+			ps.setString(5, newPassword);
+		}
 		ps.setString(6, user);
 		int updateResult = 0;
 		updateResult = ps.executeUpdate();
