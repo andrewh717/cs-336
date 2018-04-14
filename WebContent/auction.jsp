@@ -90,9 +90,11 @@
 				<% if (!session.getAttribute("user").equals(rs.getString("seller"))) { %>
 						<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>" method="POST">
 						<% if (isStartingBid) {%>
-							<input type="number" step="0.01" name="bid" placeholder="Bid <%= currency.format(price) %> or higher" min="<%= price %>">
+							<br><label for="bidAmount">Bid <%= currency.format(price) %> or higher</label><br>
+							<input type="number" step="0.01" name="bid" placeholder="" min="<%= price %>" max="100000000.01" id="bidAmount">
 						<% } else { %>
-							<input type="number" step="0.01" name="bid" placeholder="Bid higher than <%= currency.format(price) %>" min="<%= minPrice %>">
+							<br><label for="bidAmount">Bid higher than <%= currency.format(price) %></label><br>
+							<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= minPrice %>" max="100000000.01" id="bidAmount">
 						<% } %>
 							<input type="submit" value="Place bid">
 						</form>

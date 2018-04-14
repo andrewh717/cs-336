@@ -20,7 +20,9 @@
 	    		String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
 	    		Connection conn = null;
 	    		PreparedStatement ps = null;
+	    		PreparedStatement accountPs = null;
 	    		ResultSet rs = null;
+	    		ResultSet accountRs = null;
 	    		
 	    		try {
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -33,6 +35,12 @@
 	    		Locale locale = new Locale("en", "US");
 				NumberFormat currency = NumberFormat.getCurrencyInstance(locale);
 	    		String auctionQuery = "SELECT * FROM Product WHERE seller=?";
+	    		String accountQuery = "SELECT * FROM Account WHERE username=?";
+	    		
+	    		//accountPs = conn.prepareStatement(accountQuery);
+	    		//accountPs.setString();
+	    		
+	    		
 	    		ps = conn.prepareStatement(auctionQuery);
 	    		ps.setString(1, (session.getAttribute("user")).toString());
 	    		rs = ps.executeQuery();
