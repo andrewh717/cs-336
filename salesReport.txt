@@ -1,0 +1,51 @@
+/*TOTAL EARNINGS: Query for sellingHistory table getting sum of price */
+
+SELECT productID, seller, SUM(price) 'Total Earnings'
+FROM buyMe.SellingHistory
+
+GROUP BY seller;
+
+// THEORETICALLY SHOULD BE bc this prints sum of all things sold for an account
+
+SELECT SUM(price)
+FROM SellingHistory;
+
+
+/* TOTAL EARNINGS: Query in buyingHistory */
+
+SELECT productID, buyer, SUM(price) 'Total Earnings'
+FROM buyMe.BuyingHistory
+GROUP BY buyer;
+
+
+/* Earnings per Item: */
+
+SELECT productID 'Product #', SUM(price), COUNT(*) '# of Product'
+FROM buyMe.SellingHistory
+GROUP BY productID;
+
+
+SELECT productID 'Product#', SUM(price), COUNT(*) '# of Product'
+FROM buyMe.BuyingHistory
+GROUP BY productID;
+
+
+
+
+/* Earning per Item Type: */
+
+SELECT productID 'Product #', SUM(price), COUNT(*) '# of Product'
+FROM buyMe.SellingHistory NATURAL JOIN buyMe.Product
+GROUP BY category
+
+SELECT productID 'Product #', SUM(price), COUNT(*) '# of Product'
+FROM buyMe.BuyingHistory NATURAL JOIN buyMe.BuyingHistory
+GROUP BY category
+
+
+/* Best-selling items */
+
+SELECT productID , COUNT(productID) AS count
+FROM SellingHistory
+GROUP BY productID
+ORDER BY COUNT(productID) DESC;
