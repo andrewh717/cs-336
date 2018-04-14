@@ -15,6 +15,7 @@ CREATE TABLE Account(
     PRIMARY KEY (username)
 );
 
+SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS Product;
 CREATE TABLE Product(
 	productId INT AUTO_INCREMENT,
@@ -32,6 +33,7 @@ CREATE TABLE Product(
     endDate DATETIME,
 	PRIMARY KEY(productId, seller)
 );
+SET foreign_key_checks = 1;
 
 DROP TABLE IF EXISTS Bid;
 CREATE TABLE Bid(
@@ -42,7 +44,7 @@ CREATE TABLE Bid(
 		ON DELETE CASCADE,
 	FOREIGN KEY (productId) REFERENCES Product(productId)
 		ON DELETE CASCADE,
-	PRIMARY KEY (currentBid, productId)
+	PRIMARY KEY (productId)
 );
 
 DROP TABLE IF EXISTS BuyingHistory;
