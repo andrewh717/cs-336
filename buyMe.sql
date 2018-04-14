@@ -10,6 +10,7 @@ CREATE TABLE Account(
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     address VARCHAR(128) NOT NULL,
+    active BOOLEAN NOT NULL,
     access_level INT NOT NULL,
     PRIMARY KEY (username)
 );
@@ -180,19 +181,9 @@ DELIMITER $$
 				SET price=NEW.currentBid
 				WHERE NEW.productId=productId;
                 
-                #DELETE FROM Bid WHERE productId=NEW.productId;
+                INSERT INTO BidHistory VALUES(NEW.currentBid, NEW.buyer, NEW.productId);
             END;
 		END IF;
-	END; $$
-DELIMITER ;
-
-# Places the bid in the BidHistory table before updating the bid to new higher one
-DROP TRIGGER IF EXISTS ArchiveBids;
-DELIMITER $$
-	CREATE TRIGGER ArchiveBids BEFORE DELETE ON Bid
-    FOR EACH ROW
-    BEGIN
-		INSERT INTO BidHistory VALUES(OLD.currentBid, OLD.buyer, OLD.productId);
 	END; $$
 DELIMITER ;
 
@@ -215,12 +206,13 @@ DELIMITER ;
 DROP EVENT IF EXISTS PastDue;
 DELIMITER $$
 	CREATE EVENT PastDue 
-	ON SCHEDULE EVERY 1 DAY
+	ON SCHEDULE EVERY 1 HOUR STARTS NOW()
 	COMMENT 'Delets pastdue bids'
 	DO
 		BEGIN
             UPDATE Product SET sold=true WHERE NOW()>endDate AND price>min_price;
 			DELETE FROM Product WHERE NOW()>endDate AND price<min_price;
+            UPDATE Test SET works=true;
 		END; $$
 DELIMITER ;
 
