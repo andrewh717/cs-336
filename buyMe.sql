@@ -255,4 +255,6 @@ FROM SellingHistory;
 
 SELECT *
 FROM Account;
+
+UPDATE Account SET access_level=3 WHERE username='roslan';
 */
