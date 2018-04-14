@@ -71,7 +71,7 @@
 					NumberFormat currency = NumberFormat.getCurrencyInstance(locale);
 					double price = rs.getDouble("price");
 					double minPrice = price + 0.01;
-					String bidQuery = "SELECT * FROM Bid WHERE productId=?";
+					String bidQuery = "SELECT * FROM BidHistory WHERE productId=? ORDER BY bid DESC";
 					ps2 = conn.prepareStatement(bidQuery);
 					ps2.setInt(1, productId);
 					
@@ -117,7 +117,7 @@
 					<%	do { %>
 							<tr>
 								<td><%= bids2.getString("buyer") %></td>
-								<td><%= currency.format(bids2.getDouble("currentBid")) %></td>
+								<td><%= currency.format(bids2.getDouble("bid")) %></td>
 							</tr>
 					<%	} while (bids2.next()); %>
 						</table>		
