@@ -60,8 +60,8 @@
     	
     	<div class="content">
     		<form action="accountUpdate.jsp" method="POST">
-    			<label for="first_name">First Name</label>
-           		<input type="text" name="first_name" id="first_name" value="<%= firstName %>" placeholder="First Name"> <br>
+    			<label>First Name</label>
+           		<input type="text" name="first_name" value="<%= firstName %>" placeholder="First Name"> <br>
     
             	<label>Last Name</label>
             	<input type="text" name="last_name" value="<%= lastName %>" placeholder="Last Name"> <br>
@@ -69,11 +69,11 @@
             	<label>Email</label>
             	<input type="text" name="email" value="<%= email %>" placeholder="Email"> <br>
     
-            	<label for="Address">Address</label>
+            	<label>Address</label>
             	<input type="text" name="address" value="<%= address %>" placeholder="Address"> <br>
             	
-            	<label>Old Password</label>
-            	<input type="password" name="old_password" placeholder="Old Password"> <br>
+            	<label>Current Password</label>
+            	<input type="password" name="curr_password" placeholder="Current Password" required> <br>
             	
             	<label>New Password</label>
             	<input type="password" name="new_password" placeholder="New Password"> <br>
