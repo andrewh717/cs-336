@@ -86,6 +86,18 @@ CREATE TABLE BidHistory(
     PRIMARY KEY(bid, productId)
 );
 
+DROP TABLE IF EXISTS Alerts;
+CREATE TABLE Alerts(
+	productId INT,
+    seller VARCHAR(50) NOT NULL,
+    buyer VARCHAR(50) NOT NULL,
+    min_price DECIMAL(20,2) NOT NULL,
+    current_price DECIMAL(20,2),
+    sold BOOLEAN NOT NULL,
+    seen BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY(productId)
+);
+
 # Does not allow negative prices and checks for duplicate productId's
 DROP TRIGGER IF EXISTS PriceCheck;
 DELIMITER $$
@@ -208,13 +220,12 @@ DELIMITER ;
 DROP EVENT IF EXISTS PastDue;
 DELIMITER $$
 	CREATE EVENT PastDue 
-	ON SCHEDULE EVERY 1 HOUR STARTS NOW()
+	ON SCHEDULE EVERY 1 MINUTE STARTS NOW()
 	COMMENT 'Delets pastdue bids'
 	DO
 		BEGIN
             UPDATE Product SET sold=true WHERE NOW()>endDate AND price>min_price;
 			DELETE FROM Product WHERE NOW()>endDate AND price<min_price;
-            UPDATE Test SET works=true;
 		END; $$
 DELIMITER ;
 
@@ -242,6 +253,11 @@ WHERE productId=1;
 
 SELECT *
 FROM Product;
+
+SELECT NOW();
+SET @@session.time_zone = '-04:00';
+SELECT @@session.time_zone;
+SELECT @@global.time_zone;
 
 SELECT *
 FROM Bid;
