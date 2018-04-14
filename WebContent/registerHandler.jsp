@@ -32,8 +32,8 @@
 				&& password != null && !password.isEmpty()) {
 			
 			// Build the SQL query with placeholders for parameters
-			String insert = "INSERT INTO Account (username, password, email, first_name, last_name, address, access_level)"
-					+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+			String insert = "INSERT INTO Account (username, password, email, first_name, last_name, address, active, access_level)"
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 			ps = conn.prepareStatement(insert);
 			
 			// Add parameters to query
@@ -43,7 +43,8 @@
 			ps.setString(4, firstName);
 			ps.setString(5, lastName);
 			ps.setString(6, address);
-			ps.setInt(7, accessLevel);
+			ps.setBoolean(7, true);
+			ps.setInt(8, accessLevel);
 			
 			int result = 0;
 	        result = ps.executeUpdate();

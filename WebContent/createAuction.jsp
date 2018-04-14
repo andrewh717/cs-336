@@ -68,7 +68,9 @@
 			<label for="color">Color</label>
 			<input type="text" name="color" id="color" placeholder="Enter color(s)" required> <br>
 			<label for="start_datetime">Start Date and Time</label>
-			<input type="datetime-local" name="start_datetime" id="start_datetime" placeholder="mm/dd/yyyy --:-- --" required> <br> 
+			<input type="datetime-local" name="start_datetime" id="start_datetime" placeholder="mm/dd/yyyy --:-- --" required> <br>
+			
+			<!-- RESTRICT HOURS TO WHOLE HOURS --> 
 			<label for="end_datetime">End Date and Time</label>
 			<input type="datetime-local" name="end_datetime" id="end_datetime" placeholder="mm/dd/yyyy --:-- --" required> <br>
 			<label for="min_price">Minimum Bid Price (hidden from bidders)</label>
