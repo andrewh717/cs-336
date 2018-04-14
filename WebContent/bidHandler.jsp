@@ -25,11 +25,10 @@
 		if (insertResult < 1) {
 			response.sendRedirect("error.jsp"); // This should never happen
 		} else if (!Boolean.parseBoolean((request.getParameter("isStartingBid")))) {
-			String deleteOldBid = "DELETE FROM Bid WHERE productId=? AND buyer=? AND currentBid!=?";
+			String deleteOldBid = "DELETE FROM Bid WHERE productId=? AND currentBid!=?";
 			ps2 = conn.prepareStatement(deleteOldBid);
 			ps2.setInt(1, productId);
-			ps2.setString(2, bidder);
-			ps2.setFloat(3, newBid);
+			ps2.setFloat(2, newBid);
 			int deleteResult = 0;
 			deleteResult = ps2.executeUpdate();
 			if (deleteResult < 1) {
