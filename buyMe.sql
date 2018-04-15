@@ -197,7 +197,7 @@ DELIMITER $$
 				SET price=NEW.currentBid
 				WHERE NEW.productId=productId;
                 
-                INSERT INTO BidHistory VALUES(NEW.currentBid, NEW.buyer, NEW.productId);
+                INSERT INTO BidHistory VALUES(NEW.currentBid, NEW.buyer, NEW.productId, NOW());
             END;
 		END IF;
 	END; $$
@@ -216,6 +216,20 @@ DELIMITER $$
             END;
 		END IF; 
 	END; $$
+DELIMITER ;
+
+# Adds all the expired auctions into Alerts table in order to notify the users 
+# about the end of the auction they were involved in.
+DROP TRIGGER IF EXISTS Alert;
+DELIMITER $$
+	CREATE TRIGGER Alert BEFORE DELETE ON Bid
+    FOR EACH ROW
+    BEGIN
+		INSERT INTO Alerts (productId,seller,buyer,min_price,current_price,sold,seen)
+		SELECT P.productId, P.seller, OLD.buyer, P.min_price, P.price, P.sold, false
+		FROM Product P
+		WHERE P.productId=OLD.productId;
+    END; $$
 DELIMITER ;
 
 # An event that goes on once a day and removes the bids that are pastdue
