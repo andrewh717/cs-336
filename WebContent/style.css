@@ -83,15 +83,6 @@ button:hover, input[type=submit]:hover {
 	background-color: #111;	
 }
 
-.nav #searchButton {
-	
-}
-
-.nav #logoutButton {
-	padding: 5px 10px;
-	margin: 0px;
-}
-
 select {
 	width: auto;
 	padding: 8px 20px;
@@ -100,4 +91,8 @@ select {
   	border: 1px solid #ccc;
   	border-radius: 4px;
   	box-sizing: border-box;
+}
+
+td {
+	padding: 5px 15px 5px 15px; 
 }
