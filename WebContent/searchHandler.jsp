@@ -97,8 +97,12 @@
 					<h2>No results matching your search parameters.</h2>
 			<%	}		
 					
-			} catch(Exception e) {
-				response.sendRedirect("error.jsp"); // User did not enter at least one search parameter
+			} catch(Exception e) { %>
+				<jsp:include page="search.jsp" flush="true"/>
+				<div class="content center">
+					<h1>Error: You must enter at least one search parameter.</h1>
+				</div>
+			<%	//User did not enter at least one search parameter
 			    e.printStackTrace();
 			} finally {
 			    try { rs.close(); } catch (Exception e) {}
