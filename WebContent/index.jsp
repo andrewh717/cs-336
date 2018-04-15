@@ -71,6 +71,10 @@
     				<h2>You currently have no items for auction.</h2>
     		<%	} %>
     		
+    		
+    		<%
+    			//
+    		%>
     	</div>
     	        
     <% } %>
