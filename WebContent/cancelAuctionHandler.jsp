@@ -12,7 +12,7 @@
 		int productId = Integer.parseInt(request.getParameter("productId"));
 		String seller = request.getParameter("seller");
 		
-		String delete = "DELETE FROM Product WHERE prodcutId=? AND seller=?";
+		String delete = "DELETE FROM Product WHERE productId=? AND seller=?";
 		ps1 = conn.prepareStatement(delete);
 		ps1.setInt(1, productId);
 		ps1.setString(2, seller);
