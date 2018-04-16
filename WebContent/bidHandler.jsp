@@ -13,12 +13,14 @@
 		int productId = Integer.parseInt(request.getParameter("productId"));
 		String bidder = request.getParameter("bidder");
 		float newBid = Float.parseFloat(request.getParameter("bid"));
+		Timestamp date = new Timestamp(new java.util.Date().getTime());
 		
-		String insertNewBid = "INSERT INTO Bid VALUES (?, ?, ?)";
+		String insertNewBid = "INSERT INTO Bid VALUES (?, ?, ?, ?)";
 		ps1 = conn.prepareStatement(insertNewBid);
 		ps1.setFloat(1, newBid);
 		ps1.setString(2, bidder);
 		ps1.setInt(3, productId);
+		ps1.setTimestamp(4, date);
 		
 		int insertResult = 0;
 		insertResult = ps1.executeUpdate();
