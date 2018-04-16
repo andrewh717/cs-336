@@ -70,72 +70,83 @@
 				<% 
 					Locale locale = new Locale("en", "US");
 					NumberFormat currency = NumberFormat.getCurrencyInstance(locale);
-					double price = rs.getDouble("price");
-					double minPrice = price + 0.01;
-					// Query to get history of bids for the current product
-					String bidQuery = "SELECT * FROM BidHistory WHERE productId=? ORDER BY bid DESC";
-					ps2 = conn.prepareStatement(bidQuery);
-					ps2.setInt(1, productId);
-					
-					bids1 = ps2.executeQuery();
-					if (!bids1.next()) { 
-						isStartingBid = true;
-				%>
-						Starting Bid: <%= currency.format(price) %> <br>
-				<%	} else { 
-						isStartingBid = false; 
-				%>	
-						Current bid: <%= currency.format(price) %> <br>
-				<% } %>
-				
-				<!-- Provide option to place bid if current user is not the seller -->
-				<% if (!session.getAttribute("user").equals(rs.getString("seller"))
-						&& access_level == 1) { %>
-						<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>" method="POST">
-						<% if (isStartingBid) {%>
-							<br><label for="bidAmount">Bid <%= currency.format(price) %> or higher</label><br>
-							<input type="number" step="0.01" name="bid" placeholder="" min="<%= price %>" max="100000000.01" id="bidAmount">
-						<% } else { %>
-							<br><label for="bidAmount">Bid higher than <%= currency.format(price) %></label><br>
-							<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= minPrice %>" max="100000000.01" id="bidAmount">
-						<% } %>
-							<input type="submit" value="Place bid">
-						</form>
-				<% } else if(access_level == 2 
-							|| access_level == 3){ %>
-							<form action="cancelAuctionHandler.jsp?productId=<%= productId %>&seller=<%= rs.getString("seller") %>" method="POST">
-								<br><input type="submit" value="Delete auction">
+					if (rs.getBoolean("sold") == true) { 
+						// Query to get the winner of the auction
+						String winner = "SELECT * FROM BuyingHistory WHERE productId=?";
+						PreparedStatement winnerPs = conn.prepareStatement(winner);
+						winnerPs.setInt(1, productId);
+						ResultSet winnerRs = winnerPs.executeQuery();
+						winnerRs.next();
+					%>
+						
+						<b>SOLD TO:</b> <%= winnerRs.getString("buyer") %> for <%= currency.format(winnerRs.getDouble("price")) %>
+					<%	try { winnerRs.close(); } catch (Exception e) {}
+						try { winnerPs.close(); } catch (Exception e) {}
+					} else {
+						double price = rs.getDouble("price");
+						double minPrice = price + 0.01;
+						// Query to get history of bids for the current product
+						String bidQuery = "SELECT * FROM BidHistory WHERE productId=? ORDER BY bid DESC";
+						ps2 = conn.prepareStatement(bidQuery);
+						ps2.setInt(1, productId);
+						
+						bids1 = ps2.executeQuery();
+						if (!bids1.next()) { 
+							isStartingBid = true;
+					%>
+							Starting Bid: <%= currency.format(price) %> <br>
+					<%	} else { 
+							isStartingBid = false; 
+					%>	
+							Current bid: <%= currency.format(price) %> <br>
+					<% } %>
+					<!-- Provide option to place bid if current user is not the seller -->
+					<% if (!session.getAttribute("user").equals(rs.getString("seller"))
+							&& access_level == 1) { %>
+							<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>" method="POST">
+							<% if (isStartingBid) {%>
+								<br><label for="bidAmount">Bid <%= currency.format(price) %> or higher</label><br>
+								<input type="number" step="0.01" name="bid" placeholder="" min="<%= price %>" max="100000000.01" id="bidAmount">
+							<% } else { %>
+								<br><label for="bidAmount">Bid higher than <%= currency.format(price) %></label><br>
+								<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= minPrice %>" max="100000000.01" id="bidAmount">
+							<% } %>
+								<input type="submit" value="Place bid">
 							</form>
-				<% } %>
-				
-				<!-- Display bid history if any bids have been placed -->
-				<%
-					ps3 = conn.prepareStatement(bidQuery);
-					ps3.setInt(1, productId);
+					<% } else if(access_level == 2 
+								|| access_level == 3){ %>
+								<form action="cancelAuctionHandler.jsp?productId=<%= productId %>&seller=<%= rs.getString("seller") %>" method="POST">
+									<br><input type="submit" value="Delete auction">
+								</form>
+					<% } %>
 					
-					bids2 = ps3.executeQuery();
-					if (bids2.next()) { 
-				%>
-						<h2>Bid History</h2>
-						<table>
-							<tr>
-								<th>Bidder</th>
-								<th>Bid Amount</th>
-							</tr>
-					<%	do { %>
-							<tr>
-								<td><%= bids2.getString("buyer") %></td>
-								<td><%= currency.format(bids2.getDouble("bid")) %></td>
-							</tr>
-					<%	} while (bids2.next()); %>
-						</table>		
-				<%	} else { %>
-						<h2>There are currently no bids for this auction.</h2> <br>
-				<%	} %>
-				
-				
+					<!-- Display bid history if any bids have been placed -->
+					<%
+						ps3 = conn.prepareStatement(bidQuery);
+						ps3.setInt(1, productId);
+						
+						bids2 = ps3.executeQuery();
+						if (bids2.next()) { 
+					%>
+							<h2>Bid History</h2>
+							<table>
+								<tr>
+									<th>Bidder</th>
+									<th>Bid Amount</th>
+								</tr>
+						<%	do { %>
+								<tr>
+									<td><%= bids2.getString("buyer") %></td>
+									<td><%= currency.format(bids2.getDouble("bid")) %></td>
+								</tr>
+						<%	} while (bids2.next()); %>
+							</table>		
+					<%	} else { %>
+							<h2>There are currently no bids for this auction.</h2> <br>
+					<%	} 
 					
-				<%
+					}
+				
 					ResultSet similarItems = null;
 					String genderFixed = (rs.getString("gender")).replace("'", "\\'");
 					String similarQuery = "SELECT * FROM Product WHERE productId!=" + productId
@@ -168,10 +179,7 @@
 					</table>
 				<%	} else { %>
 						<br><h3>There are no similar items on auction.</h3>
-				<%	} %>		
-			
-				
-			<%	
+				<%	} 							
 				} catch(SQLException e) {
 					out.print("<p>Error connecting to MYSQL server.</p>");
 			        e.printStackTrace();
