@@ -14,10 +14,9 @@
 	<div class="main">
 		<div class="wrap">
 			<div class="content">
-				<h1 style="color:blue;"> How can we assist you? </h1>
-				
+				<h1 style="color:blue;"> How can we assist you <%=session.getAttribute("user")%>  ? </h1>
 				<form action="questionsHandler.jsp" method="post">
-					<textarea style="font-size: 18pt" rows="1" cols="100" id="msg" name="question"></textarea> <br>
+					<textarea style="font-size: 18pt" rows="1" cols="100" maxlength="250" id="msg" name="Question"></textarea> <br>
 					<input type="submit" value="Search">					
 				</form>
 			</div>
@@ -25,3 +24,4 @@
 	
 	</div>	
 </body>
+</html>
