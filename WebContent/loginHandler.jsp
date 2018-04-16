@@ -16,7 +16,7 @@
 		String password = request.getParameter("password");
 		
 		if (username != null && password != null) {
-			String validation = "SELECT password FROM Account WHERE username=?";
+			String validation = "SELECT * FROM Account WHERE username=?";
 			ps = conn.prepareStatement(validation);
 			ps.setString(1, username);
 			
