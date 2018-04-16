@@ -7,9 +7,9 @@ CREATE TABLE Account(
 	username VARCHAR(50),
     password VARCHAR(128) BINARY NOT NULL,
     email VARCHAR(128) NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    address VARCHAR(128) NOT NULL,
+    first_name VARCHAR(50) BINARY NOT NULL,
+    last_name VARCHAR(50) BINARY NOT NULL,
+    address VARCHAR(128) BINARY NOT NULL,
     active BOOLEAN NOT NULL,
     access_level INT NOT NULL,
     PRIMARY KEY (username)

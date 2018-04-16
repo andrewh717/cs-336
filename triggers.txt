@@ -3,12 +3,20 @@ DELIMITER $$
 	CREATE TRIGGER PriceCheck BEFORE INSERT ON Product
 	FOR EACH ROW
 	BEGIN
+	
+		# Creates a temporary table with all the items in the wish list that match the new product 
+		CREATE TEMPORARY TABLE Temp
+        SELECT *
+        FROM WishList
+        WHERE category=NEW.category AND brand=NEW.brand AND model=NEW.model AND gender=NEW.gender AND size=NEW.size AND color=NEW.color;
+	
 		# Interrupts the action and prevents insertion with a negative price
 		IF NEW.price<0
 		THEN
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Price cannot be negative';
 			END;
+			
 		# Interrupts the action and prevents insertion with duplicate productId
 		ELSEIF (EXISTS(
 			SELECT P.productId
@@ -18,12 +26,27 @@ DELIMITER $$
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='ProductId already exists';
 			END;
+			
 		# Interrupts the action and prevents insertion with startDate > endDate
 		ELSEIF (NEW.startDate>NEW.endDate)
 		THEN
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The end date cannot be before the start date';
             END;
+			
+		# Puts an alert for all the users that have the new inserted item in their wish list
+		ELSEIF ((SELECT COUNT(*)
+				FROM Temp) <>0)
+        THEN
+			BEGIN
+				INSERT INTO Alerts (user, message)
+                SELECT user, concat('The following item is availablenow: <a href=\"auction.jsp?productId="', ' ', NEW.productId,' ', '"  \">Click here to go to the auction page.</a>')
+                FROM WishList;
+            END;
+		END IF;
+		
+		# Drops the temporary table created in the trigger
+        DROP TEMPORARY TABLE Temp;
 		END IF; 
 	END; $$
 DELIMITER ;
@@ -49,6 +72,18 @@ DELIMITER $$
 				FROM Product P
 				WHERE P.productId=NEW.productId;
 				
+				# Alert for the seller
+                INSERT INTO Alerts (user, message)
+                SELECT P.seller, "Your item got sold!"
+                FROM Product P
+                WHERE P.productId=NEW.productId;
+                
+                # Alert for the buyer
+                INSERT INTO Alerts (user, message)
+                SELECT B.buyer, "You've got the item!"
+                FROM Bid B
+                WHERE B.productId=NEW.productId;
+				
 				# Deletes the item from the Bid table
 				DELETE FROM Bid WHERE productId=NEW.productId;
 			END;
@@ -69,7 +104,8 @@ DELIMITER $$
 				SET price=NEW.currentBid
 				WHERE NEW.productId=productId;
 			END;
-		# Inserts the action and prevents the insertion with a lower bid
+			
+		# Interrupts the action and prevents the insertion with a lower bid
 		ELSEIF (NEW.currentBid<=OLD.currentBid)
 		THEN
 			BEGIN
@@ -92,6 +128,7 @@ DELIMITER $$
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The new bid is lower than the current bid';
 			END;
+			
 		# Updates the price value to the value of the new higher bid
 		ELSEIF(NEW.currentBid>(SELECT P.price
 								FROM Product P
@@ -103,18 +140,6 @@ DELIMITER $$
 				WHERE NEW.productId=productId;
             END;
 		END IF;
-	END; $$
-DELIMITER ;
-
-# Places the bid in the BidHistory table before updating the bid to new greater one (To keep track of bidding history)
-DELIMITER $$
-	CREATE TRIGGER ArchiveBids BEFORE DELETE ON Bid
-    FOR EACH ROW
-    BEGIN
-		INSERT INTO BidHistory (bid, buyer, productId)
-        SELECT B.currentBid, B.buyer, B.productId
-        FROM Bid B
-        WHERE OLD.productId=B.productId;
 	END; $$
 DELIMITER ;
 
@@ -136,10 +161,11 @@ DELIMITER ;
 # An event that goes on once a day and removes the bids that are pastdue
 DELIMITER $$
 	CREATE EVENT PastDue 
-	ON SCHEDULE EVERY 1 DAY
+	ON SCHEDULE EVERY 1 MINUTE STARTS NOW()
 	COMMENT 'Delets pastdue bids'
 	DO
 		BEGIN
-			DELETE FROM Product WHERE NOW()>endDate;
+            UPDATE Product SET sold=true WHERE NOW()>endDate AND price>min_price;
+			DELETE FROM Product WHERE NOW()>endDate AND price<min_price;
 		END; $$
 DELIMITER ;
