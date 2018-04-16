@@ -17,9 +17,9 @@
 		
 		String insertNewBid = "INSERT INTO Bid VALUES (?, ?, ?, ?)";
 		ps1 = conn.prepareStatement(insertNewBid);
-		ps1.setFloat(1, newBid);
+		ps1.setInt(1, productId);
 		ps1.setString(2, bidder);
-		ps1.setInt(3, productId);
+		ps1.setFloat(3, newBid);
 		ps1.setTimestamp(4, date);
 		
 		int insertResult = 0;
