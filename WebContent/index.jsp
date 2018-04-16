@@ -50,7 +50,12 @@
 		    				</tr>
 		    		<%	do { %>
 		    				<tr>
-		    					<td><%= alertRs.getString("message") %></td>
+		    					<td>
+		    						<%= alertRs.getString("message") %>
+		    						<a href="markAsRead.jsp?messageId=<%= alertRs.getInt("messageId") %>">
+		    							<input type="submit" value="Mark as read">
+		    						</a>
+		    					</td>
 		    				</tr>
 		    		<%	} while (alertRs.next()); %>
 		    			</table>
