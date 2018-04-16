@@ -43,7 +43,10 @@
 		    		if (accountRs.getInt("access_level") == 3) { %>
 		    			<jsp:include page="adminDashboard.jsp"/>
 		 	    			
-		    	<%	}
+		    	<%	} 
+		    		if (accountRs.getInt("access_level") == 2) { %>
+		    			<jsp:include page="customerRepDashboard.jsp"/>
+		    	<%  }
 		    		
 		    		ps = conn.prepareStatement(auctionQuery);
 		    		ps.setString(1, user);

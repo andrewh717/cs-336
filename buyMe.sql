@@ -85,6 +85,8 @@ CREATE TABLE BidHistory(
     buyer VARCHAR(50),
 	bid DECIMAL(20,2),
     date DATETIME,
+    FOREIGN KEY (productId) REFERENCES Product(productId)
+		ON DELETE CASCADE,
     PRIMARY KEY(bid, productId)
 );
 
@@ -289,6 +291,8 @@ FROM SellingHistory;
 
 SELECT *
 FROM Account;
+
+UPDATE Account SET active=true WHERE username='test1';
 
 UPDATE Account SET access_level=3 WHERE username='test';
 */
