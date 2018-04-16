@@ -33,6 +33,7 @@
 					conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
 				
 					int productId = Integer.parseInt(request.getParameter("productId"));
+					int access_level = (Integer) session.getAttribute("access_level");
 					String productQuery = "SELECT * FROM Product WHERE productId=?";
 					ps1 = conn.prepareStatement(productQuery);
 					ps1.setInt(1, productId);
@@ -88,7 +89,8 @@
 				<% } %>
 				
 				<!-- Provide option to place bid if current user is not the seller -->
-				<% if (!session.getAttribute("user").equals(rs.getString("seller"))) { %>
+				<% if (!session.getAttribute("user").equals(rs.getString("seller"))
+						&& access_level == 1) { %>
 						<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>" method="POST">
 						<% if (isStartingBid) {%>
 							<br><label for="bidAmount">Bid <%= currency.format(price) %> or higher</label><br>
@@ -99,6 +101,11 @@
 						<% } %>
 							<input type="submit" value="Place bid">
 						</form>
+				<% } else if(access_level == 2 
+							|| access_level == 3){ %>
+							<form action="cancelAuctionHandler.jsp?productId=<%= productId %>&seller=<%= rs.getString("seller") %>" method="POST">
+								<br><input type="submit" value="Delete auction">
+							</form>
 				<% } %>
 				
 				<!-- Display bid history if any bids have been placed -->
