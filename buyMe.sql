@@ -45,7 +45,7 @@ CREATE TABLE Bid(
 		ON DELETE CASCADE,
 	FOREIGN KEY (productId) REFERENCES Product(productId)
 		ON DELETE CASCADE,
-	PRIMARY KEY (productId)
+	PRIMARY KEY (productId, currentBid)
 );
 
 DROP TABLE IF EXISTS BuyingHistory;
@@ -101,12 +101,43 @@ CREATE TABLE Alerts(
     PRIMARY KEY(messageId)
 );
 
+DROP TABLE IF EXISTS Questions;
+CREATE TABLE Questions(
+	questionId INT AUTO_INCREMENT,
+    user VARCHAR(50),
+    question VARCHAR(250) NOT NULL,
+    answer VARCHAR(250) DEFAULT NULL,
+    FOREIGN KEY (user) REFERENCES Account(username)
+		ON DELETE CASCADE,
+    PRIMARY KEY (questionId)
+);
+
+DROP TABLE IF EXISTS WishList;
+CREATE TABLE WishList(
+	user VARCHAR(50),
+    category VARCHAR(50) NOT NULL,
+	brand VARCHAR(25) NOT NULL,
+	model VARCHAR(50) NOT NULL,
+	gender VARCHAR(10) NOT NULL,
+    size INT NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    max_price DECIMAL(20,2) NOT NULL,
+    FOREIGN KEY (user) REFERENCES Account(username)
+		ON DELETE CASCADE,
+    PRIMARY KEY (user, category, brand, model, gender, size, color)
+);
+
 # Does not allow negative prices and checks for duplicate productId's
 DROP TRIGGER IF EXISTS PriceCheck;
 DELIMITER $$
 	CREATE TRIGGER PriceCheck BEFORE INSERT ON Product
 	FOR EACH ROW
 	BEGIN
+		CREATE TEMPORARY TABLE Temp
+        SELECT *
+        FROM WishList
+        WHERE category=NEW.category AND brand=NEW.brand AND model=NEW.model AND gender=NEW.gender AND size=NEW.size AND color=NEW.color;
+        
 		IF NEW.price<0
 		THEN
 			BEGIN
@@ -125,7 +156,16 @@ DELIMITER $$
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The end date cannot be before the start date';
             END;
-		END IF; 
+		ELSEIF ((SELECT COUNT(*)
+				FROM Temp) <>0)
+        THEN
+			BEGIN
+				INSERT INTO Alerts (user, message)
+                SELECT user, concat('The following item is availablenow: <a href=\"auction.jsp?productId="', ' ', NEW.productId,' ', '"  \">Click here to go to the auction page.</a>')
+                FROM WishList;
+            END;
+		END IF;
+        DROP TEMPORARY TABLE Temp;
 	END; $$
 DELIMITER ;
 
@@ -138,16 +178,31 @@ DELIMITER $$
 		IF NEW.sold=true
 		THEN
 			BEGIN
+				# inserts the item into the buying history table
 				INSERT INTO BuyingHistory (productId, buyer, price, date)
 				SELECT B.productId, B.buyer, B.currentBid, NOW()
 				FROM Bid B
 				WHERE B.productId=NEW.productId;
 				
+                # inserts the item into the selling history table
 				INSERT INTO SellingHistory (productId, seller, price, date)
 				SELECT P.productId, P.seller, P.price, NOW()
 				FROM Product P
 				WHERE P.productId=NEW.productId;
+                
+                # alert for the seller
+                INSERT INTO Alerts (user, message)
+                SELECT P.seller, "Your item got sold!"
+                FROM Product P
+                WHERE P.productId=NEW.productId;
+                
+                # alert for the buyer
+                INSERT INTO Alerts (user, message)
+                SELECT B.buyer, "You've got the item!"
+                FROM Bid B
+                WHERE B.productId=NEW.productId;
 				
+                # removes the bids for the item after it's sold
 				DELETE FROM Bid WHERE productId=NEW.productId;
 			END;
 		END IF; 
@@ -258,7 +313,15 @@ SELECT *
 FROM Product;
 
 SELECT *
+FROM Questions;
+
+SELECT *
 FROM Bid;
+
+INSERT INTO Bid VALUES(8,'test2',60,NULL);
+SELECT *
+FROM Bid
+WHERE date=NULL;
 
 SELECT *
 FROM BidHistory;
@@ -272,7 +335,9 @@ FROM SellingHistory;
 SELECT *
 FROM Account;
 
-UPDATE Account SET active=true WHERE username='test1';
+DELETE FROM Account WHERE username="cr";
 
-UPDATE Account SET access_level=3 WHERE username='test';
+UPDATE Account SET username='crep' WHERE username='crep1';
+
+UPDATE Account SET access_level=1 WHERE username='test';
 */
