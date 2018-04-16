@@ -21,8 +21,10 @@
 	    		Connection conn = null;
 	    		PreparedStatement ps = null;
 	    		PreparedStatement accountPs = null;
+	    		PreparedStatement alertPs = null;
 	    		ResultSet rs = null;
 	    		ResultSet accountRs = null;
+	    		ResultSet alertRs = null;
 	    		
 	    		try {
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -32,8 +34,27 @@
 		    		Locale locale = new Locale("en", "US");
 					NumberFormat currency = NumberFormat.getCurrencyInstance(locale);
 					String user = (session.getAttribute("user")).toString();
+					
+					String alertQuery = "SELECT * FROM Alerts WHERE user=? AND seen=false";
 		    		String auctionQuery = "SELECT * FROM Product WHERE seller=?";
 		    		String accountQuery = "SELECT * FROM Account WHERE username=?";
+		    		
+		    		alertPs = conn.prepareStatement(alertQuery);
+		    		alertPs.setString(1, user);
+		    		alertRs = alertPs.executeQuery();
+		    		if (alertRs.next()) { %>
+		    			<h2>Unread Alerts</h2>
+		    			<table>
+		    				<tr>
+		    					<th>Message</th>
+		    				</tr>
+		    		<%	do { %>
+		    				<tr>
+		    					<td><%= alertRs.getString("message") %></td>
+		    				</tr>
+		    		<%	} while (alertRs.next()); %>
+		    			</table>
+		    	<%	}   		
 		    		
 		    		accountPs = conn.prepareStatement(accountQuery);
 		    		accountPs.setString(1, user);
