@@ -60,6 +60,7 @@
 			try { conn.close(); } catch (Exception e) {} 
 		}   		
 	%>
+	<p> <a href="questions.jsp">Click here to return to ask another questions</a> </p>
 	</div> 
 </body>
 </html>

@@ -35,7 +35,7 @@
 		        	return;
 		        }
 			} else {
-				response.sendRedirect("error.jsp");
+				response.sendRedirect("questionError.jsp");
 				return;
 			}    
 		} catch(Exception e) {
