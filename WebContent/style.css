@@ -95,8 +95,20 @@ select {
 
 th {
 	padding: 5px 15px 5px 15px;
+	text-align: left;
+	background-color: #626262;
+	color: white;	
 }
 
 td {
 	padding: 5px 15px 5px 15px; 
+}
+
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+tr:hover {
+	background-color: #ddd;
 }

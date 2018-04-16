@@ -13,7 +13,7 @@
        } else { %>
     	<%@ include file="navbar.jsp" %>
     	<div class="content">
-	    	<h1>Hello, <%=session.getAttribute("user")%></h1>
+	    	<h1>Account Options</h1>
 	    	<ul>
 	            <li><a href="bidHistory.jsp">View your bidding history</a></li>
 	            <li><a href="sellingHistory.jsp">View your selling history</a></li>

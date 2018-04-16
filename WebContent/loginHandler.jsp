@@ -27,6 +27,7 @@
 				if (password.equals(db_password)) {
 					session.setAttribute("user", username);
 					session.setAttribute("access_level", rs.getInt("access_level"));
+					session.setAttribute("first_name", rs.getString("first_name"));
 					response.sendRedirect("index.jsp");
 		        	return;
 				} else {

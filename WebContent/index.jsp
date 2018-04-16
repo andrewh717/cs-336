@@ -15,7 +15,7 @@
        } else { %>
     	<%@ include file="navbar.jsp" %>
     	<div class="content">
-    		<h1>Hello, <%=session.getAttribute("user")%></h1>
+    		<h1>Hello, <%=session.getAttribute("first_name")%></h1>
     		<%
 	    		String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
 	    		Connection conn = null;
