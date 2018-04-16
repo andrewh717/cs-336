@@ -12,8 +12,8 @@
 			
 			String username = (session.getAttribute("user")).toString();
 			String question = request.getParameter("Question");
-			out.print(username);
-			out.print(question);
+//			out.print(username);
+//			out.print(question);
 			
 //			String answer = null;
 				
@@ -31,7 +31,7 @@
 		        if (result < 1) {
 		        	out.println("Error: Question failed.");
 		        } else {
-		        	response.sendRedirect("index.jsp");
+		        	response.sendRedirect("questionResponse.jsp");
 		        	return;
 		        }
 			} else {
