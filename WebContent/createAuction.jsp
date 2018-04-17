@@ -27,12 +27,25 @@
 			<select name="brand" id="brand" required>
 				<option value="" disabled selected hidden="true">Select brand</option>
 				<option value="Adidas">Adidas</option>
+				<option value="ALDO">ALDO</option>
+				<option value="Allen Edmonds">Allen Edmonds</option>
 				<option value="Asics">Asics</option>
+				<option value="Clarks">Clarks</option>
+				<option value="Cole Haan">Cole Haan</option>
+				<option value="Converse">Converse</option>
+				<option value="Dr. Martens">Dr. Martens</option>
 				<option value="Ecco">Ecco</option>
+				<option value="Florsheim">Florsheim</option>
+				<option value="J.Crew">J.Crew</option>
+				<option value="Kenneth Cole">Kenneth Cole</option>
 				<option value="New Balance">New Balance</option>
 				<option value="Nike">Nike</option>
 				<option value="Puma">Puma</option>
+				<option value="Red Wing">Red Wing</option>
 				<option value="Reebok">Reebok</option>
+				<option value="Steve Madden">Steve Madden</option>
+				<option value="Timberland">Timberland</option>
+				<option value="UGG">UGG</option>
 				<option value="Vans">Vans</option>
 				<option value="Other">Other</option>
 			</select> <br> 
