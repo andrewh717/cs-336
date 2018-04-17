@@ -50,7 +50,8 @@
 					<% do { %>
 						<tr>
 							<td><%= rs.getString("question") %> </td>
-							<% if (check.equals(rs.getString("answer"))) { %>
+							<% if (check.equals(rs.getString("answer"))
+									&& Integer.parseInt((session.getAttribute("access_level")).toString()) != 1) { %>
 								<form action="answersHandler.jsp?questionId=<%= rs.getInt("questionId") %>" method="POST">
 									<td>
 										<textarea type="textarea" name="Answer"></textarea>
