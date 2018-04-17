@@ -21,10 +21,12 @@
 				PreparedStatement ps1 = null;
 				PreparedStatement ps2 = null;
 				PreparedStatement ps3 = null;
+				PreparedStatement autoPs = null;
 
 				ResultSet rs = null;
 				ResultSet bids1 = null;
 				ResultSet bids2 = null;
+				ResultSet autoRs = null;
 				
 				boolean isStartingBid = false;
 				
@@ -32,6 +34,7 @@
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
 					conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
 				
+					String user = session.getAttribute("user").toString();
 					int productId = Integer.parseInt(request.getParameter("productId"));
 					int access_level = (Integer) session.getAttribute("access_level");
 					String productQuery = "SELECT * FROM Product WHERE productId=?";
@@ -101,23 +104,55 @@
 							Current bid: <%= currency.format(price) %> <br>
 					<% } %>
 					<!-- Provide option to place bid if current user is not the seller -->
-					<% if (!session.getAttribute("user").equals(rs.getString("seller"))
-							&& access_level == 1) { %>
-							<form action="bidHandler.jsp?bidder=<%= session.getAttribute("user") %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>" method="POST">
-							<% if (isStartingBid) {%>
-								<br><label for="bidAmount">Bid <%= currency.format(price) %> or higher</label><br>
-								<input type="number" step="0.01" name="bid" placeholder="" min="<%= price %>" max="100000000.01" id="bidAmount">
-							<% } else { %>
-								<br><label for="bidAmount">Bid higher than <%= currency.format(price) %></label><br>
-								<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= minPrice %>" max="100000000.01" id="bidAmount">
-							<% } %>
-								<input type="submit" value="Place bid">
+					<% if (!session.getAttribute("user").equals(rs.getString("seller")) && access_level == 1) {
+								// Check if user has autobid setup for this product, if no display the following
+								String queryAutoBid = "SELECT * FROM AutoBidding WHERE user=? AND productId=?";
+								autoPs = conn.prepareStatement(queryAutoBid);
+								autoPs.setString(1, user);
+								autoPs.setInt(2, productId);
+								autoRs = autoPs.executeQuery();
+								if (!autoRs.next()) { %>
+									<form action="bidHandler.jsp?bidder=<%= user %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>" method="POST" class="place-bid-form">
+									<% if (isStartingBid) { %>
+										<label for="bidAmount">Bid <%= currency.format(price) %> or higher</label><br>
+										<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= price %>" max="100000000.01" id="bidAmount" required>
+									<% } else { %>
+										<label for="bidAmount">Bid higher than <%= currency.format(price) %></label><br>
+										<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= minPrice %>" max="100000000.01" id="bidAmount" required>
+									<% } %>
+										<input type="submit" value="Place bid">
+									</form>
+									or
+									<h4 class="auto-bid-title">Setup Automatic Bidding</h4>
+									<form action="bidHandler.jsp?bidder=<%= user %>&productId=<%= productId %>&isStartingBid=<%= isStartingBid %>&auto=true" method="POST" class="auto-bid-form">
+									<% if (isStartingBid) { %>
+										<label for="bidAmount">Start auto-bidding at <%= currency.format(price) %> or higher</label><br>
+										<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= price %>" max="100000000.01" id="bidAmount" required><br>
+										
+										<label for="bidIncrement">Auto-bid increment</label><br>
+										<input type="number" step="0.01" name="bidIncrement" placeholder="Enter the increment amount" min="0.01" max="100000000.01" id="bidIncrement" required><br>
+										
+										<label for="maxBid">Upper Limit</label><br>
+										<input type="number" step="0.01" name="maxBid" placeholder="Enter upper limit" min="0.01" max="100000000.01" id="maxBid" required>
+									<% } else { %>
+										<label for="bidAmount">Start auto-bidding higher than <%= currency.format(price) %></label><br>
+										<input type="number" step="0.01" name="bid" placeholder="Enter bid" min="<%= minPrice %>" max="100000000.01" id="bidAmount" required><br>
+											
+										<label for="bidIncrement">Auto-bid increment</label><br>
+										<input type="number" step="0.01" name="bidIncrement" placeholder="Enter the increment amount" min="0.01" max="100000000.01" id="bidIncrement" required><br>
+										
+										<label for="maxBid">Upper Limit</label><br>
+										<input type="number" step="0.01" name="maxBid" placeholder="Enter upper limit" min="0.01" max="100000000.01" id="maxBid" required>
+									<% } %>
+										<br><input type="submit" value="Start auto-bid">
+									</form>	
+							<%	} else { %>
+									<h2>You have setup automatic bidding for this auction.</h2>
+							<%	}
+					   } else if(access_level == 2 || access_level == 3){ %>
+							<form action="cancelAuctionHandler.jsp?productId=<%= productId %>&seller=<%= rs.getString("seller") %>" method="POST">
+								<br><input type="submit" value="Delete auction">
 							</form>
-					<% } else if(access_level == 2 
-								|| access_level == 3){ %>
-								<form action="cancelAuctionHandler.jsp?productId=<%= productId %>&seller=<%= rs.getString("seller") %>" method="POST">
-									<br><input type="submit" value="Delete auction">
-								</form>
 					<% } %>
 					
 					<!-- Display bid history if any bids have been placed -->
@@ -190,6 +225,7 @@
 					try { ps1.close(); } catch (Exception e) {}
 					try { ps2.close(); } catch (Exception e) {}
 					try { ps3.close(); } catch (Exception e) {}
+					try { autoPs.close(); } catch (Exception e) {}
 			        try { conn.close(); } catch (Exception e) {}
 				}
 			%>

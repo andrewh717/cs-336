@@ -112,3 +112,16 @@ tr:nth-child(even) {
 tr:hover {
 	background-color: #ddd;
 }
+
+.place-bid-form {
+	padding-top: 1em;
+}
+
+.auto-bid-form {
+	padding-top: 1em;
+}
+
+h4.auto-bid-title {
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}
