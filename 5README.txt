@@ -3,8 +3,7 @@ CS 336 - Final Project Auction Bidding Site
 Group #5
 Andrew Hernandez, Daniel Chrostowski, Roslan Arslanouk
 
-Project URL:___________________________________
-
+Project URL: http://ec2-34-201-110-238.compute-1.amazonaws.com:8080/buyMe
 
 Amazon EC2 and Apache Tomcat credentials:
 
