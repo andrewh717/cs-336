@@ -173,7 +173,7 @@ DELIMITER $$
         THEN
 			BEGIN
 				INSERT INTO Alerts (user, message)
-                SELECT user, concat('The following item is availablenow: <a href=\"auction.jsp?productId="', ' ', 'NEW.productId',' ', '"  \">Click here to go to the auction page.</a>')
+                SELECT user, concat('The following item is availablenow: <a href=\"auction.jsp?productId="', ' ', NEW.productId,' ', '"  \">Click here to go to the auction page.</a>')
                 FROM WishList;
             END;
 		END IF;
