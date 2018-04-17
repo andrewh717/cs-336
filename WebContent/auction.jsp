@@ -149,7 +149,7 @@
 							<%	} else { %>
 									<h2>You have setup automatic bidding for this auction.</h2>
 							<%	}
-					   } else if(access_level == 2 || access_level == 3){ %>
+					   } else if (access_level == 2 || access_level == 3) { %>
 							<form action="cancelAuctionHandler.jsp?productId=<%= productId %>&seller=<%= rs.getString("seller") %>" method="POST">
 								<br><input type="submit" value="Delete auction">
 							</form>

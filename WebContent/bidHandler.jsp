@@ -95,15 +95,27 @@
 					autoPs.setInt(1, productId);
 					autoPs.setString(2, prevBidder);
 					if (newBid + increment <= maxPrice) {
-						autoPs.setFloat(3, newBid + increment);
+						newBid = newBid + increment;
 					} else {
-						autoPs.setFloat(3, maxPrice);
+						newBid = maxPrice;
 					}
+					autoPs.setFloat(3, newBid);
+					
 					Timestamp dateAuto = new Timestamp(new java.util.Date().getTime());
 					autoPs.setTimestamp(4, dateAuto);
 					int autoInsertResult = 0;
 					autoInsertResult = autoPs.executeUpdate();
 					
+					deleteOldBid = "DELETE FROM Bid WHERE productId=? AND currentBid!=?";
+					ps2.close();
+					ps2 = conn.prepareStatement(deleteOldBid);
+					ps2.setInt(1, productId);
+					ps2.setFloat(2, newBid);
+					deleteResult = 0;
+					deleteResult = ps2.executeUpdate();
+					if (deleteResult < 1) {
+						response.sendRedirect("error.jsp"); // This should never happen
+					}					
 					String outBidAlert = "INSERT INTO Alerts (user, message) VALUES (?, ?)";
 					alertPs = conn.prepareStatement(outBidAlert);
 					alertPs.setString(1, bidder);

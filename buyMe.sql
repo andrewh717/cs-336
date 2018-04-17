@@ -227,7 +227,17 @@ DELIMITER $$
                 # removes the bids for the item after it's sold
 				DELETE FROM Bid WHERE productId=NEW.productId;
 			END;
-		END IF; 
+		END IF;
+        
+        # Removes all auto biddings that have max_price that is less then the current bid on the product
+        IF ((SELECT max_price
+			FROM AutoBidding
+            WHERE productId=NEW.productId)<=NEW.price)
+        THEN
+			BEGIN
+				DELETE FROM AutoBidding WHERE productId=NEW.productId;
+            END;
+		END IF;
 	END; $$
 DELIMITER ;
 
