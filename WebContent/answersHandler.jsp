@@ -13,23 +13,23 @@
 			int questionId = Integer.parseInt(request.getParameter("questionId"));
 			String answer = request.getParameter("Answer");
 
-			if(username != null && !username.isEmpty() && question != null && !question.isEmpty()){
+			if(answer != null && !answer.isEmpty()){
 				
 				String insert = "UPDATE Questions SET answer=? WHERE questionId=?";
 				
 				ps = conn.prepareStatement(insert);
 				
 				ps.setString(1, answer);
-				ps.setString(2, questionId);
+				ps.setInt(2, questionId);
 				
 				int result = 0;
 		        result = ps.executeUpdate();
 		        if (result < 1) {
 		        	out.println("Error: Question failed.");
 		        } else { %>
-		        	<jsp:include page="auction.jsp" flush="true"/>
+		        	<jsp:include page="questions.jsp" flush="true"/>
 					<div class="content center">
-						<h1>Auction was successfully deleted.</h1>
+						<h1>Question was successfully answered.</h1>
 					</div>
 		    <%  }
 			} else {
