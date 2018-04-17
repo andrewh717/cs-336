@@ -79,7 +79,7 @@
 		    		rs = ps.executeQuery();
 		    		
 		   			
-		   			if (rs.next()) { 
+		   			if (rs.next() && accountRs.getInt("access_level") == 1) { 
 		   		%>
 		    			<h2>Your created auctions:</h2>
 		    			<table>
@@ -100,7 +100,7 @@
 							</tr> 			
 		   			<%	} while (rs.next()); %>
 		   				</table>
-		   		<%	} else { %>
+		   		<%	} else if (accountRs.getInt("access_level") == 1){ %>
 		   				<h2>You currently have no items for auction.</h2>
 		   		<%	}
     		} catch (SQLException e) {

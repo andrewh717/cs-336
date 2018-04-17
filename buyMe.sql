@@ -127,6 +127,18 @@ CREATE TABLE WishList(
     PRIMARY KEY (user, category, brand, model, gender, size, color)
 );
 
+DROP TABLE IF EXISTS AutoBidding;
+CREATE TABLE AutoBidding(
+	user VARCHAR(50),
+    productId INT,
+    max_price DECIMAL(20,2) NOT NULL,
+    FOREIGN KEY (user) REFERENCES Account(username)
+		ON DELETE CASCADE,
+	FOREIGN KEY (productId) REFERENCES Product(productId)
+		ON DELETE CASCADE,
+	PRIMARY KEY(user, productId)
+);
+
 # Does not allow negative prices and checks for duplicate productId's
 DROP TRIGGER IF EXISTS PriceCheck;
 DELIMITER $$
@@ -167,6 +179,16 @@ DELIMITER $$
 		END IF;
         DROP TEMPORARY TABLE Temp;
 	END; $$
+DELIMITER ;
+
+# Deletes the auto bidding for the deleted product
+DROP TRIGGER IF EXISTS CancelAutoBidIfProductDeleted;
+DELIMITER $$
+	CREATE TRIGGER CancelAutoBidIfProductDeleted AFTER DELETE ON Product
+    FOR EACH ROW
+    BEGIN
+		DELETE FROM AutoBidding WHERE productId=OLD.productId;
+    END; $$
 DELIMITER ;
 
 # After the item gets sold, places it in the buying/selling history tables and deletes it from bid table
@@ -257,6 +279,21 @@ DELIMITER $$
             END;
 		END IF;
 	END; $$
+DELIMITER ;
+
+# Stops the auto biding for the user that deactivated the account
+DROP TRIGGER IF EXISTS CancelAutoBidding;
+DELIMITER $$
+	CREATE TRIGGER CancelAutoBidding AFTER UPDATE ON Account
+    FOR EACH ROW
+    BEGIN
+		IF NEW.active=false
+        THEN
+			BEGIN
+				DELETE FROM AutoBiding WHERE user=NEW.username;
+			END;
+		END IF;
+    END; $$
 DELIMITER ;
 
 # Prevents deleting an admin account

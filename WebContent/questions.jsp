@@ -18,7 +18,7 @@
 	
 		<h1>Submit a new question:</h1>
 		<form action="questionsHandler.jsp" method="post">
-			<textarea style="font-size: 18pt" rows="1" cols="100" maxlength="250" id="msg" name="Question"></textarea> <br>
+			<textarea style="font-size: 18pt" rows="1" cols="90" maxlength="250" id="msg" name="Question"></textarea> <br>
 			<input type="submit" value="Submit">					
 		</form>	
 	<% 
@@ -39,7 +39,7 @@
 			if(rs.next()){ %> 
 				<h1> Question Results: </h1>
 				<p style="font-size: 8pt;">
-					**Please note that all questions may not be answered until a customer representative gets a chance to answer them.** 
+					**Please note that all questions may not be answered until a customer representative gets a chance to answer them** 
 				</p>
 				<table> 
 					<tr>
