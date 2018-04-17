@@ -1,5 +1,8 @@
 CS 336 - Final Project Auction Bidding Site
 
+Group #5
+Andrew Hernandez, Daniel Chrostowski, Roslan Arslanouk
+
 Project URL:___________________________________
 
 
@@ -35,4 +38,7 @@ Apache Tomcat credentials:
 user: admin
 password: cs336
 
-Credit Per User:
+Credit Per User: All did equal amount of work for this project
+
+
+***************************NOTES ABOUT THE PROJECT***************************
