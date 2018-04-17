@@ -375,7 +375,9 @@ FROM Account;
 SELECT *
 FROM Questions;
 
-DELETE FROM Account WHERE username="cr";
+DELETE FROM Questions WHERE questionId="3";
+DELETE FROM Questions WHERE questionId="5";
+DELETE FROM Questions WHERE questionId="6";
 
 UPDATE Account SET username='crep' WHERE username='crep1';
 

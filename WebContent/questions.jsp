@@ -31,7 +31,7 @@
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
 			String username = (session.getAttribute("user")).toString();
-			String questionsQuery = "SELECT question, answer FROM Questions";
+			String questionsQuery = "SELECT * FROM Questions";
 			String check = "Awaiting answer from customer representative";
 			
 			ps = conn.prepareStatement(questionsQuery);
@@ -50,7 +50,7 @@
 					<% do { %>
 						<tr>
 							<td><%= rs.getString("question") %> </td>
-							<% if (!check.equals(rs.getString("question"))) { %>
+							<% if (check.equals(rs.getString("answer"))) { %>
 								<form action="answersHandler.jsp?questionId=<%= rs.getInt("questionId") %>" method="POST">
 									<td>
 										<textarea type="textarea" name="Answer"></textarea>
