@@ -372,6 +372,9 @@ FROM SellingHistory;
 SELECT *
 FROM Account;
 
+SELECT *
+FROM Questions;
+
 DELETE FROM Account WHERE username="cr";
 
 UPDATE Account SET username='crep' WHERE username='crep1';

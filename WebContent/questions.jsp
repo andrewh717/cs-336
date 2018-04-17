@@ -32,6 +32,7 @@
 			conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
 			String username = (session.getAttribute("user")).toString();
 			String questionsQuery = "SELECT question, answer FROM Questions";
+			String check = "Awaiting answer from customer representative";
 			
 			ps = conn.prepareStatement(questionsQuery);
 			rs = ps.executeQuery();
@@ -49,8 +50,17 @@
 					<% do { %>
 						<tr>
 							<td><%= rs.getString("question") %> </td>
+							<% if (!check.equals(rs.getString("question"))) { %>
+								<form action="answersHandler.jsp?questionId=<%= rs.getInt("questionId") %>" method="POST">
+									<td>
+										<textarea type="textarea" name="Answer"></textarea>
+										<input type="submit" value="Answer">
+									</td>
+								</form>
+							<% } else { %>
 							<td><%= rs.getString("answer") %> </td>
-						</tr>						
+							<% } %>
+						</tr>
 			<% 		} while(rs.next()); %>
 				</table>
 			<% 	} else { %>
