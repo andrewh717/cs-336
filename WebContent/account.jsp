@@ -15,6 +15,8 @@
     	<div class="content">
 	    	<h1>Account Options</h1>
 	    	<ul>
+	    		<li><a href="wishListView.jsp">View your wishlist</a></li>
+	    		<li><a href="wishList.jsp">Add an item to your wishlist</a></li>
 	            <li><a href="bidHistory.jsp">View your bidding history</a></li>
 	            <li><a href="sellingHistory.jsp">View your selling history</a></li>
 	            <li><a href="buyingHistory.jsp">View your purchase history</a></li>
