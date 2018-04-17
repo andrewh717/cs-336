@@ -12,7 +12,7 @@
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
 			
-			System.out.println(request.getParameter("messageId"));
+			//System.out.println(request.getParameter("messageId"));
 			int messageId = Integer.parseInt(request.getParameter("messageId"));
 			String updateSeen = "UPDATE Alerts SET seen=true WHERE messageId=?";
 			ps = conn.prepareStatement(updateSeen);
