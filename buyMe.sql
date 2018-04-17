@@ -168,7 +168,9 @@ DELIMITER $$
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The end date cannot be before the start date';
             END;
-		ELSEIF ((SELECT COUNT(*)
+		END IF;
+        
+		IF ((SELECT COUNT(*)
 				FROM Temp) <>0)
         THEN
 			BEGIN
