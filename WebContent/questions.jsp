@@ -11,17 +11,64 @@
 </head>
 <body>	
 	<%@ include file="navbar.jsp"%>
-	<div class="main">
-		<div class="wrap">
-			<div class="content">
-				<h1 style="color:blue;"> How can we assist you <%=session.getAttribute("user")%>  ? </h1>
-				<form action="questionsHandler.jsp" method="post">
-					<textarea style="font-size: 18pt" rows="1" cols="100" maxlength="250" id="msg" name="Question"></textarea> <br>
-					<input type="submit" value="Search">					
-				</form>
-			</div>
-		</div>
+	<div class="content">
+	<%	if (request.getParameter("submit") != null && (request.getParameter("submit")).toString().equals("success")) { %>
+			<h1>Your question has been submitted successfully.</h1>
+	<%	} %>
 	
-	</div>	
+		<h1>Submit a new question:</h1>
+		<form action="questionsHandler.jsp" method="post">
+			<textarea style="font-size: 18pt" rows="1" cols="100" maxlength="250" id="msg" name="Question"></textarea> <br>
+			<input type="submit" value="Submit">					
+		</form>	
+	<% 
+		String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {   		
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
+			String username = (session.getAttribute("user")).toString();
+			String questionsQuery = "SELECT question, answer FROM Questions";
+			
+			ps = conn.prepareStatement(questionsQuery);
+			rs = ps.executeQuery();
+			
+			if(rs.next()){ %> 
+				<h1> Question Results: </h1>
+				<p style="font-size: 8pt;">
+					**Please note that all questions may not be answered until a customer representative gets a chance to answer them.** 
+				</p>
+				<table> 
+					<tr>
+						<th>Question</th>
+						<th>Answer</th>
+					</tr>				
+					<% do { %>
+						<tr>
+							<td><%= rs.getString("question") %> </td>
+							<td><%= rs.getString("answer") %> </td>
+						</tr>						
+			<% 		} while(rs.next()); %>
+				</table>
+			<% 	} else { %>
+					<br><h2>No questions have been asked.</h2>	
+			<%	}  %>	
+			
+		<%
+		
+		} catch (SQLException e){
+			out.print("<p>Error connecting to MYSQL server.</p>");
+		    e.printStackTrace();    			
+		} finally {
+			try { rs.close(); } catch (Exception e) {} 
+			try { conn.close(); } catch (Exception e) {} 
+		}   		
+	%>
+		
+		
+	</div>
 </body>
 </html>
