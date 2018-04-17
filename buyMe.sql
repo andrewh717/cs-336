@@ -269,7 +269,7 @@ DELIMITER $$
 	CREATE TRIGGER NewBid BEFORE INSERT ON Bid
     FOR EACH ROW
     BEGIN
-		IF (NEW.currentBid<(SELECT P.price
+		IF (NEW.currentBid<=(SELECT P.price
 							FROM Product P
                             WHERE P.productId=NEW.productId))
         THEN 
@@ -329,67 +329,7 @@ DELIMITER $$
 	COMMENT 'Delets pastdue bids'
 	DO
 		BEGIN
-            UPDATE Product SET sold=true WHERE NOW()>endDate AND price>min_price;
+            UPDATE Product SET sold=true WHERE NOW()>endDate AND price>=min_price;
 			DELETE FROM Product WHERE NOW()>endDate AND price<min_price;
 		END; $$
 DELIMITER ;
-
-# For testing purposes
-/*
-# Testing tuples
-INSERT INTO Product VALUES(3,'testboot','shoe','ra','M',4,'black','roslan',25,false,'2018-03-05 01:00:00','2018-03-04 05:00:00');
-INSERT INTO Bid VALUES(30,'test',1);
-
-# To clean up
-DELETE FROM Product WHERE productId=21;
-DELETE FROM SellingHistory WHERE productId=1 AND seller='roslan';
-DELETE FROM BuyingHistory WHERE productId=1 AND buyer='test';
-DELETE FROM Account WHERE username='roslan';
-DELETE FROM BidHistory WHERE productId=6;
-
-# Testing the triggers
-UPDATE Product
-SET sold=true
-WHERE productId=1;
-
-UPDATE Bid
-SET currentBid=50
-WHERE productId=1;
-
-SELECT *
-FROM Product;
-
-SELECT *
-FROM Questions;
-
-SELECT *
-FROM Bid;
-
-INSERT INTO Bid VALUES(8,'test2',60,NULL);
-SELECT *
-FROM Bid
-WHERE date=NULL;
-
-SELECT *
-FROM BidHistory;
-
-SELECT *
-FROM BuyingHistory;
-
-SELECT *
-FROM SellingHistory;
-
-SELECT *
-FROM Account;
-
-SELECT *
-FROM Questions;
-
-DELETE FROM Questions WHERE questionId="3";
-DELETE FROM Questions WHERE questionId="5";
-DELETE FROM Questions WHERE questionId="6";
-
-UPDATE Account SET username='crep' WHERE username='crep1';
-
-UPDATE Account SET access_level=1 WHERE username='test';
-*/
