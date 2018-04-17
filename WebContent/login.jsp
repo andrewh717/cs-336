@@ -9,7 +9,7 @@
 </head>
 <body>
 	<div class="content center">
-        <h1>BuyMe</h1>
+        <h1 style="font-size:400%;"> BuyMe</h1>
         <h2><i>Buy & Sell Shoes</i></h2>
         <form action="loginHandler.jsp" method="POST">
         	<input type="text" name="username" placeholder="Username"> <br>
