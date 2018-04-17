@@ -168,13 +168,16 @@ DELIMITER $$
 			BEGIN
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='The end date cannot be before the start date';
             END;
-		ELSEIF ((SELECT COUNT(*)
+		END IF;
+        
+		IF ((SELECT COUNT(*)
 				FROM Temp) <>0)
         THEN
 			BEGIN
 				INSERT INTO Alerts (user, message)
-                SELECT user, concat('The following item is availablenow: <a href=\"auction.jsp?productId="', ' ', NEW.productId,' ', '"  \">Click here to go to the auction page.</a>')
-                FROM WishList;
+                SELECT user, 'One of the items on your wish list became available'
+                FROM WishList
+                WHERE category=NEW.category AND brand=NEW.brand AND model=NEW.model AND gender=NEW.gender AND size=NEW.size AND color=NEW.color;
             END;
 		END IF;
         DROP TEMPORARY TABLE Temp;
