@@ -52,7 +52,7 @@
 		} else if (!Boolean.parseBoolean((request.getParameter("isStartingBid")))) {
 			String prevBidder = null;
 			float prevBid = 0;
-			String queryOldBid = "SELECT * FROM Bid WHERE productId=? AND currentBid!=?";
+			String queryOldBid = "SELECT * FROM Bid WHERE productId=? AND currentBid<?";
 			queryPs = conn.prepareStatement(queryOldBid);
 			queryPs.setInt(1, productId);
 			queryPs.setFloat(2, newBid);
@@ -62,7 +62,7 @@
 				prevBid = rs.getFloat("currentBid");
 			}
 			
-			String deleteOldBid = "DELETE FROM Bid WHERE productId=? AND currentBid!=?";
+			String deleteOldBid = "DELETE FROM Bid WHERE productId=? AND currentBid<?";
 			ps2 = conn.prepareStatement(deleteOldBid);
 			ps2.setInt(1, productId);
 			ps2.setFloat(2, newBid);
@@ -106,7 +106,7 @@
 					int autoInsertResult = 0;
 					autoInsertResult = autoPs.executeUpdate();
 					
-					deleteOldBid = "DELETE FROM Bid WHERE productId=? AND currentBid!=?";
+					deleteOldBid = "DELETE FROM Bid WHERE productId=? AND currentBid<?";
 					ps2.close();
 					ps2 = conn.prepareStatement(deleteOldBid);
 					ps2.setInt(1, productId);
@@ -126,7 +126,7 @@
 				
 				// Alert the person who got outbid (if that person is not the one who just placed the bid)
 				if ((prevBidder!= null && !prevBidder.equals(bidder) && prevHasAuto == false) || 
-					(prevBidder!= null && !prevBidder.equals(bidder) && prevHasAuto == true && prevBid == maxPrice)) {
+					(prevBidder!= null && !prevBidder.equals(bidder) && prevHasAuto == true && prevBid >= maxPrice)) {
 					String outBidAlert = "INSERT INTO Alerts (user, message) VALUES (?, ?)";
 					alertPs = conn.prepareStatement(outBidAlert);
 					alertPs.setString(1, prevBidder);
