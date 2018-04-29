@@ -336,3 +336,22 @@ DELIMITER $$
 			DELETE FROM Product WHERE NOW()>endDate AND price<min_price;
 		END; $$
 DELIMITER ;
+
+SELECT *
+FROM Account;
+
+SELECT *
+FROM Product;
+
+SELECT *
+FROM Bid;
+
+SELECT *
+FROM BuyingHistory;
+SELECT *
+FROM SellingHistory;
+
+SELECT *
+FROM Questions;
+
+
