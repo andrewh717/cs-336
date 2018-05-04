@@ -28,7 +28,7 @@
     		
     		try {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
+				conn = DriverManager.getConnection(url, "cs336admin", "cs336buyme5");
 				String accountQuery = "SELECT * FROM Account WHERE username=?";
 				ps = conn.prepareStatement(accountQuery);
 				ps.setString(1, (session.getAttribute("user")).toString());

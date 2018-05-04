@@ -32,7 +32,7 @@
 				
 				try {
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
-					conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
+					conn = DriverManager.getConnection(url, "cs336admin", "cs336buyme5");
 				
 					String user = session.getAttribute("user").toString();
 					int productId = Integer.parseInt(request.getParameter("productId"));

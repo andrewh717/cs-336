@@ -22,7 +22,7 @@
     		ResultSet rs = null;
     		try {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
+				conn = DriverManager.getConnection(url, "cs336admin", "cs336buyme5");
 				String query = "SELECT * FROM WishList WHERE user=?";
 				String user = (session.getAttribute("user")).toString();
 				Locale locale = new Locale("en", "US");

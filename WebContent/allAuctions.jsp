@@ -24,7 +24,7 @@
     	
     		try {
     			Class.forName("com.mysql.jdbc.Driver").newInstance();
-				conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
+				conn = DriverManager.getConnection(url, "cs336admin", "cs336buyme5");
 				Locale locale = new Locale("en", "US");
 				NumberFormat currency = NumberFormat.getCurrencyInstance(locale);
 				String allAuctionsQuery = "SELECT * FROM Product WHERE sold=false";

@@ -10,7 +10,7 @@
 		PreparedStatement ps = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(url, "cs336admin", "cs336password");
+			conn = DriverManager.getConnection(url, "cs336admin", "cs336buyme5");
 			
 			//System.out.println(request.getParameter("messageId"));
 			int messageId = Integer.parseInt(request.getParameter("messageId"));
