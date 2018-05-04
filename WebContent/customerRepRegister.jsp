@@ -13,13 +13,13 @@
 	<% if (session.getAttribute("user") == null) { 
     		response.sendRedirect("login.jsp");
        } else { 
-			String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
+			String url = "jdbc:mysql://aws_rds_endpoint/db_name";
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
 		   	try {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				conn = DriverManager.getConnection(url, "cs336admin", "cs336buyme5");
+				conn = DriverManager.getConnection(url, "rds_username", "rds_password");
 				
 				String user = (session.getAttribute("user")).toString();
 				String accountQuery = "SELECT * FROM Account WHERE username=?";

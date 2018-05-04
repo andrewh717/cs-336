@@ -2,7 +2,7 @@
 <%@ page import="javax.servlet.http.*,javax.servlet.*"%>
 
 <%
-	String url = "jdbc:mysql://buyme.cas20dm0rabg.us-east-1.rds.amazonaws.com:3306/buyMe";
+	String url = "jdbc:mysql://aws_rds_endpoint/db_name";
 	Connection conn = null;			
 	PreparedStatement ps1 = null;
 	PreparedStatement ps2 = null;
@@ -14,7 +14,7 @@
 	ResultSet autoRs = null;
 	try {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		conn = DriverManager.getConnection(url, "cs336admin", "cs336buyme5");
+		conn = DriverManager.getConnection(url, "rds_username", "rds_password");
 	
 		int productId = Integer.parseInt(request.getParameter("productId"));
 		String bidder = request.getParameter("bidder");
