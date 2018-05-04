@@ -132,6 +132,7 @@ CREATE TABLE AutoBidding(
 	user VARCHAR(50),
     productId INT,
     max_price DECIMAL(20,2) NOT NULL,
+    incremental DECIMAL(20,2) NOT NULL,
     FOREIGN KEY (user) REFERENCES Account(username)
 		ON DELETE CASCADE,
 	FOREIGN KEY (productId) REFERENCES Product(productId)
