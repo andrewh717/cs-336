@@ -5,6 +5,7 @@ Andrew Hernandez, Daniel Chrostowski, Roslan Arslanouk
 
 Project URL: http://ec2-34-201-110-238.compute-1.amazonaws.com:8080/buyMe
 
+<<<<<<< HEAD
 Amazon EC2 and Apache Tomcat credentials:
 
 336ProjectKey.pem file:
@@ -37,6 +38,8 @@ Apache Tomcat credentials:
 user: admin
 password: cs336
 
+=======
+>>>>>>> 228ffd95b0d2d07697dc2a8fb929e6d00761449d
 Credit Per User: All did equal amount of work for this project
 
 
